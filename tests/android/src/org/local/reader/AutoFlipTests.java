@@ -269,14 +269,18 @@ public class AutoFlipTests extends Instrumentation {
       ui(() -> {
         TextView title=findText(activity.getWindow().getDecorView(),"电脑连接与模型");
         TextView addressTitle=findText(activity.getWindow().getDecorView(),"电脑服务地址");
+        TextView aboutTitle=findText(activity.getWindow().getDecorView(),"关于");
+        TextView projectUrl=findText(activity.getWindow().getDecorView(),MainActivity.PROJECT_URL);
+        TextView creator=findText(activity.getWindow().getDecorView(),"adadsws · "+MainActivity.CREATOR_URL);
         android.view.View addressRow=findDescription(activity.getWindow().getDecorView(),"设置项 电脑服务地址");
         check(title.getCurrentTextColor()==MainActivity.SECTION_HEADING_TEXT
             && title.getBackground()==null && addressRow!=null
             && addressRow.getHeight()==MainActivity.SETTING_ROW_HEIGHT
             && addressTitle!=null && activity.addressStatus.getHeight()==56
+            && aboutTitle!=null && projectUrl!=null && creator!=null
             && activity.address.getParent()==null
             && directSettingControls(activity.getWindow().getDecorView())==0,
-            "settings uses equal two-line rows and keeps direct controls out of the list");
+            "settings uses equal two-line rows, includes about links, and keeps direct controls out of the list");
       }); passed++;
       ui(() -> findDescription(activity.getWindow().getDecorView(),"设置项 配对口令").performClick());
       ui(() -> {

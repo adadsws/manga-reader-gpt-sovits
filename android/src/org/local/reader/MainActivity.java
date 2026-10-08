@@ -24,6 +24,8 @@ public class MainActivity extends Activity {
   static final int WARNING_TEXT = Color.rgb(180, 120, 20);
   static final int DISCONNECTED_TEXT = Color.rgb(190, 45, 45);
   static final int MAX_PAIR_RESPONSE_BYTES = 65536;
+  static final String PROJECT_URL = "https://github.com/adadsws/manga-reader";
+  static final String CREATOR_URL = "https://github.com/adadsws";
   static class ConnectionVersionState {
     final String text;
     final int color;
@@ -228,6 +230,11 @@ public class MainActivity extends Activity {
             () -> setAdvancedVisible(true));
     entry.view.setContentDescription("进入高级选项");
     return entry.view;
+  }
+
+  // 关于信息复用标准设置行；点击后交给系统浏览器打开公开地址。
+  void openWebPage(String url) {
+    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
   }
 
   public void onCreate(Bundle state) {
@@ -608,6 +615,9 @@ public class MainActivity extends Activity {
         "关闭朗读服务和浮窗",
         "停止播放、后台处理和浮窗服务",
         () -> stopService(new Intent(this, ReaderService.class)));
+    LinearLayout about = section(l, "关于");
+    settingRow(about, "项目地址", PROJECT_URL, () -> openWebPage(PROJECT_URL));
+    settingRow(about, "制作人", "adadsws · " + CREATOR_URL, () -> openWebPage(CREATOR_URL));
   }
 
   @Override public void onBackPressed() {
