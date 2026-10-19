@@ -1,8 +1,14 @@
-# 漫画朗读
+# 漫画朗读 · GPT-SoVITS
 
 [介绍视频（哔哩哔哩）：【工具】让任意 GPT-SoVITS 模型朗读任意漫画](https://www.bilibili.com/video/BV1ooan6iEgm/)
 
 在 Android 上打开漫画，点击浮窗，电脑会按阅读顺序识别并朗读文字，也可以在读完后自动翻页。所有处理都在本机完成，使用时电脑需保持开机。
+
+## 使用的主要模型
+
+- **RapidOCR（PP-OCRv6）** 识别漫画页面中的文字。
+- **Magi v2** 检测分镜和文字区域，辅助确定阅读顺序。
+- **GPT-SoVITS** 用所选角色的声音朗读文字。你可以把自己喜欢的、与当前 GPT-SoVITS 运行版本兼容的语音模型放进电脑端模型目录，在 Android 应用中选择；“蔚蓝档案·日奈”只是项目提供的可复现示例。模型需有 GPT `.ckpt`、SoVITS `.pth` 和参考音频，切换时会实际加载并试读。
 
 ## 效果预览
 
@@ -10,7 +16,7 @@
   <img src="docs/readme-assets/manga-page.jpg" alt="漫画页面预览" width="420">
 </p>
 
-<audio controls preload="metadata" src="https://raw.githubusercontent.com/adadsws/manga-reader/main/docs/readme-assets/reading-preview.wav">
+<audio controls preload="metadata" src="https://raw.githubusercontent.com/adadsws/manga-reader-gpt-sovits/main/docs/readme-assets/reading-preview.wav">
   当前页面不支持直接播放音频。
 </audio>
 
@@ -32,7 +38,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File tools/prepare_runtime.ps1
 python tools/prepare_layout.py
 ```
 
-第一条命令只下载“蔚蓝档案·日奈”一个角色，已有日奈模型时可以跳过；第二、三条命令准备运行环境和漫画分析模型。
+第一条命令只下载“蔚蓝档案·日奈”这个示例角色，已有兼容的 GPT-SoVITS 语音模型时可以跳过；第二、三条命令准备运行环境和漫画分析模型。
 
 模型来源及重新下载方法见[日奈模型说明](models/gpt-sovits/蔚蓝档案-日语.md)和[Magi 模型说明](models/layout/magiv2.md)。
 
