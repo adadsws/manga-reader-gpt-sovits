@@ -1,0 +1,62 @@
+{
+  "collection": "终末地-中文",
+  "source_page": "https://www.ai-hobbyist.com/thread-160048-1-1.html",
+  "source_version": "上游不可变版本未知；固定 2026-10-22 本机运行文件快照",
+  "files": [
+    {
+      "path": "V2ProPlus/洛茜/【默认】这就证明我是最出色的干员了吧？不知道卡特洛有没有这么顺利。下次再见到那家伙，我可要好好炫耀一下！.wav",
+      "bytes": 808236,
+      "sha256": "68d673897afdcf93d745ad6d649e987c03bceff219cde590228b6916923e218d"
+    },
+    {
+      "path": "V2ProPlus/洛茜/头像.jpg",
+      "bytes": 122439,
+      "sha256": "2561a4ad21fc78b19ceec20bdf414f1aba77cda494c4c36fc65f58a715d75bb0"
+    },
+    {
+      "path": "V2ProPlus/洛茜/终末地_洛茜-e15.ckpt",
+      "bytes": 155312502,
+      "sha256": "425f3dda391b62f90c19674e47a68a39e56723634980df330dee607dc3cba254"
+    },
+    {
+      "path": "V2ProPlus/洛茜/终末地_洛茜-e20.ckpt",
+      "bytes": 155312502,
+      "sha256": "cd5b1df2f7ccf80d3a3c2a7fd38237ad282b79959d28482431f292290ae56144"
+    },
+    {
+      "path": "V2ProPlus/洛茜/终末地_洛茜_e16_s400.pth",
+      "bytes": 172764597,
+      "sha256": "210d6c759567050b6fd4e9287c6b7c9e176897e3cbddb180501b809826c5e15a"
+    },
+    {
+      "path": "V2ProPlus/洛茜/终末地_洛茜_e20_s500.pth",
+      "bytes": 172764597,
+      "sha256": "e084258246d8fae4d62fec8b5659c393ae219b4d88e375890e40d80c1297863d"
+    },
+    {
+      "path": "V4/洛茜/【默认】这就证明我是最出色的干员了吧？不知道卡特洛有没有这么顺利。下次再见到那家伙，我可要好好炫耀一下！.wav",
+      "bytes": 808236,
+      "sha256": "68d673897afdcf93d745ad6d649e987c03bceff219cde590228b6916923e218d"
+    },
+    {
+      "path": "V4/洛茜/头像.jpg",
+      "bytes": 122439,
+      "sha256": "2561a4ad21fc78b19ceec20bdf414f1aba77cda494c4c36fc65f58a715d75bb0"
+    },
+    {
+      "path": "V4/洛茜/洛茜-e10.ckpt",
+      "bytes": 155312438,
+      "sha256": "a5a366889170dc4bd24e0f6ad899851eb9c1d2ef7407688b973b9501f0586bba"
+    },
+    {
+      "path": "V4/洛茜/洛茜_e12_s408_l32.pth",
+      "bytes": 75549629,
+      "sha256": "6fab4e9990aecfc5e85aa5616c7c24afb60630093ecea3e5ed39f83001a6a50c"
+    },
+    {
+      "path": "V4/洛茜/洛茜_e16_s544_l32.pth",
+      "bytes": 75549629,
+      "sha256": "7dc930588b667dcc600dcd75bb56cf93b828dde01cc4fe739659abe79e9c362f"
+    }
+  ]
+}

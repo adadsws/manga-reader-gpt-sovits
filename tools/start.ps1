@@ -4,7 +4,14 @@ $ErrorActionPreference = 'Stop'
 $taskRoot = Split-Path -Parent $PSScriptRoot
 Set-Location -LiteralPath $taskRoot
 $runtime = Get-Content -Raw -Encoding UTF8 config/runtime.json | ConvertFrom-Json
-$taskPython = $runtime.python
+$taskPython = [string]$runtime.python
+if ($taskPython -and ![IO.Path]::IsPathRooted($taskPython)) {
+ $taskPython = Join-Path $taskRoot $taskPython
+}
+if (!$taskPython -or !(Test-Path -LiteralPath $taskPython -PathType Leaf)) {
+ [Console]::Error.WriteLine("运行时 Python 不存在：$taskPython。请修正 config/runtime.json 的 python 路径，或按 README 准备运行环境。")
+ exit 1
+}
 $taskLogs = Join-Path $taskRoot '~temp/logs'
 New-Item -ItemType Directory -Force -Path $taskLogs | Out-Null
 $env:PYTHONUTF8='1'
@@ -27,6 +34,23 @@ function Record-ReaderProcess($process) {
  $script:taskRecords+=@{id=$process.Id;started=$process.StartTime.ToUniversalTime().ToString('o');path=$taskPython}
  ConvertTo-Json -InputObject @($script:taskRecords) | Set-Content -Encoding UTF8 -LiteralPath $taskPidFile
 }
+function Assert-ReaderPortOwner($port) {
+ foreach ($taskOwnerPid in @(Get-NetTCPConnection -State Listen -LocalPort $port -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess -Unique)) {
+  $taskOwner=Get-Process -Id $taskOwnerPid -ErrorAction SilentlyContinue
+  $taskKnown=$false
+  if ($taskOwner -and $taskOwner.Path) {
+   foreach ($record in $taskRecords) {
+    if ([int]$record.id -ne $taskOwnerPid) {continue}
+    $taskStarted=[datetime]::Parse([string]$record.started,[Globalization.CultureInfo]::InvariantCulture,[Globalization.DateTimeStyles]::RoundtripKind)
+    if ([IO.Path]::GetFullPath($taskOwner.Path) -eq [IO.Path]::GetFullPath([string]$record.path) -and
+        $taskOwner.StartTime.ToUniversalTime().Ticks -eq $taskStarted.ToUniversalTime().Ticks) {$taskKnown=$true;break}
+   }
+  }
+  if (!$taskKnown) {throw "端口 $port 被未由本启动器记录的进程占用（PID $taskOwnerPid），未接管。"}
+ }
+}
+Assert-ReaderPortOwner 9882
+Assert-ReaderPortOwner 8765
 if (!(Test-ReaderEndpoint 'http://127.0.0.1:9882/openapi.json')) {
  & $taskPython -B tools/prepare_tts.py
  if ($LASTEXITCODE -ne 0) {throw 'GPT-SoVITS 运行视图准备失败'}
@@ -57,6 +81,8 @@ if ($taskReaderConfig.startup_warmup -ne $false) {
 } else {
  Write-Host '启动预热已关闭；首次朗读将包含模型加载等待。'
 }
+$taskValidation=Invoke-RestMethod -Method Post -Uri 'http://127.0.0.1:8765/models/validation/start' -Headers @{'X-Reader-Token'=[string]$taskReaderConfig.token} -TimeoutSec 15
+Write-Host '电脑已开始后台逐项验证未验证或上次失败的朗读模型；手机模型目录会显示进度。'
 if ($Follow) {
     $taskRuntime=Get-Content -Raw -Encoding UTF8 -LiteralPath (Join-Path $taskRoot 'config/runtime.json') | ConvertFrom-Json
     $env:PYTHONUTF8='1'

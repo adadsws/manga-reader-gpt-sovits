@@ -1,8 +1,8 @@
 {
-  "purpose": "Offline regression validation only; not used in the production reading flow",
-  "runtime": "python",
+  "purpose": "Production ASR completeness check and offline regression validation",
+  "runtime": "~temp/runtime/gpt-sovits/python.exe",
   "funasr": "1.0.27",
-  "model_path": "models/gpt-sovits/pretrained/tools/asr_models/speech_paraformer-large_asr_nat-zh-cn-16k-common-vocab8404-pytorch",
+  "model_path": "~temp/gpt-sovits/GPT_SoVITS/pretrained_models/tools/asr_models/speech_paraformer-large_asr_nat-zh-cn-16k-common-vocab8404-pytorch",
   "files_sha256": {
     "model.pt": "5bba782a5e9196166233b9ab12ba04cadff9ef9212b4ff6153ed9290ff679025",
     "config.yaml": "35438403286ade9fd080e83592c497aaa65ac62ea24071cd33482b883fb7c90c",
@@ -11,5 +11,5 @@
     "tokens.json": "bea7d6e8bf3b5f5d30ec29d178b4975af84cb6a5c0c5c47e78cd8c615bb0e2f1",
     "seg_dict": "5a1a69ed5393bdfd9b8197ef982b92529b4df92a89dc5763f8ab96eddfae4a21"
   },
-  "source": "Local GPT-SoVITS pretrained assets; restore separately"
+  "source": "Existing tavern assets, read-only; no new download"
 }

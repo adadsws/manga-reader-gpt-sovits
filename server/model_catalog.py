@@ -98,12 +98,11 @@ class ModelCatalog:
     def _reference(self,directory):
         local=self._local_audio(directory)
         if local:return local
-        # 型号子目录可从同一角色根目录的数据集取参考音频，绝不跨到其他角色。
+        # 只在本角色目录内查找嵌套数据集；型号子目录也可继承同一角色根目录。
         voice_root=self._role_root(directory)
-        if voice_root!=directory:
-            if self.default_reference.is_file() and _inside(self.default_reference,voice_root):return self.default_reference
-            nested=sorted((p for p in voice_root.rglob("*") if p.is_file() and p.suffix.lower() in AUDIO_EXTENSIONS and not self._excluded(p.parent)),key=lambda p:(not p.name.startswith("【默认】"),p.relative_to(voice_root).as_posix().casefold()))
-            if nested:return nested[0]
+        if self.default_reference.is_file() and _inside(self.default_reference,voice_root):return self.default_reference
+        nested=sorted((p for p in voice_root.rglob("*") if p.is_file() and p.suffix.lower() in AUDIO_EXTENSIONS and not self._excluded(p.parent)),key=lambda p:(not p.name.startswith("【默认】"),p.relative_to(voice_root).as_posix().casefold()))
+        if nested:return nested[0]
         return None
     def _language(self,path,reference):
         joined="/".join(path.relative_to(self.root).parts)
@@ -155,7 +154,6 @@ class ModelCatalog:
                     if not reference:errors.append("缺少参考音频（.wav）")
                     prompt=_prompt(reference) if reference else ""
                     if not prompt:errors.append("无法从参考音频文件名取得提示文字")
-                    if not avatar:errors.append("缺少头像（png/jpg/jpeg/webp）")
                     validation=self.validation.get(model_id,{})
                     if not validation:
                         validation=next((self.validation[item] for item in compat_ids if item in self.validation),self.validation.get(legacy_id,{}))
@@ -289,6 +287,41 @@ class ModelCatalog:
             self.validation[model_id]={"status":"available","validated_at":int(time.time())};self._write(self.validation_path,self.validation)
             self.active_id=self.loaded_id=self.requested_id=model_id
             if persist:self._write(self.state_path,{"model_id":model_id,"voice":self.settings["voice"],"voice_name":self.settings["voice_name"],"model_version":self.settings["model_version"],"reference_text":self.settings["reference_text"],"prompt_lang":self.settings["prompt_lang"]})
+            return self._public({**item,"state":"available","validated_at":self.validation[model_id]["validated_at"]})
+
+    def validate_one(self,model_id,probe):
+        """临时加载并试读候选；始终恢复当前权重，不改变用户选择。"""
+        with self.lock:
+            self.scan()
+            item=self.last_scan.get(model_id)
+            if not item:raise ValueError("模型不存在或已被移除")
+            if not item["selectable"]:raise ValueError("模型文件不完整："+"；".join(item["errors"]))
+            if item["state"]=="available":return self._public(item)
+            previous=self.last_scan.get(self.active_id)
+            if not previous or self.loaded_id!=self.active_id:
+                raise RuntimeError("当前模型尚未加载，不能安全执行批量验证")
+            trial_error=None
+            try:
+                self._load(item)
+                probe(item)
+            except Exception as exc:
+                trial_error=exc
+            try:
+                self._load(previous)
+            except Exception as exc:
+                self.loaded_id=None
+                message="当前模型恢复失败，已停止批量验证："+str(exc)
+                if trial_error:message="候选模型加载或试读失败："+str(trial_error)+"；"+message
+                self.validation[model_id]={"status":"failed","error":message,"validated_at":int(time.time())}
+                self._write(self.validation_path,self.validation)
+                raise RuntimeError(message) from exc
+            if trial_error:
+                message="模型加载或试读失败："+str(trial_error)
+                self.validation[model_id]={"status":"failed","error":message,"validated_at":int(time.time())}
+                self._write(self.validation_path,self.validation)
+                raise RuntimeError(message) from trial_error
+            self.validation[model_id]={"status":"available","validated_at":int(time.time())}
+            self._write(self.validation_path,self.validation)
             return self._public({**item,"state":"available","validated_at":self.validation[model_id]["validated_at"]})
 
     def ensure_loaded(self):

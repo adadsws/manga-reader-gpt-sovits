@@ -1,0 +1,292 @@
+{
+  "repository": "aihobbyist/GPT-SoVITS_Model_Collection",
+  "revision": "ed003dd111c7697bf3ed12750241cf9859280406",
+  "license": "CC-BY-NC-4.0 (see upstream README; no redistribution)",
+  "files": [
+    {
+      "path": "鸣潮/中文/1号演员_ZH.zip",
+      "bytes": 213472661,
+      "sha256": "8763d70c8fae6513b7e1bde958bfb169f401137acffdf55463012126f6fa39d4"
+    },
+    {
+      "path": "鸣潮/中文/「角」_ZH.zip",
+      "bytes": 213189256,
+      "sha256": "97ef568a922c5138891782e7d58cc0b138af705a0049180774550b9fb1aaf952"
+    },
+    {
+      "path": "鸣潮/中文/丹瑾_ZH.zip",
+      "bytes": 213197881,
+      "sha256": "9ee473acb09a563fdf454501cecaf948e45e2b5227c7fefde2c2381dea32fa52"
+    },
+    {
+      "path": "鸣潮/中文/丽维_ZH.zip",
+      "bytes": 213304797,
+      "sha256": "1f512de8844b99e963d3af84e1de23eef0bfb2b97f27633871552e970b5bf629"
+    },
+    {
+      "path": "鸣潮/中文/亚哈_ZH.zip",
+      "bytes": 213202050,
+      "sha256": "574f774f0922a254f47a7626c45a1ddb60e47b5808834871f93c5b5deb037369"
+    },
+    {
+      "path": "鸣潮/中文/今汐_ZH.zip",
+      "bytes": 213326911,
+      "sha256": "9ffad41bd4964ff12a272a87c64aece948fcb4fd75622471c8ac1fa91b33c349"
+    },
+    {
+      "path": "鸣潮/中文/伤痕_ZH.zip",
+      "bytes": 213201876,
+      "sha256": "fdde5a3fba03e3f821996ba7f459d104d4b0e1ca476e427c23fe464ab206be61"
+    },
+    {
+      "path": "鸣潮/中文/偃师_ZH.zip",
+      "bytes": 213507022,
+      "sha256": "14070bb5d5a9a6946d0bc0dc45f52ef17448de8e5e65f55b0aabdb589a865a21"
+    },
+    {
+      "path": "鸣潮/中文/克里斯托弗_ZH.zip",
+      "bytes": 213399516,
+      "sha256": "b40a0f276cd297e7bf478d9da85afb9bcb4f20ac9522ac1cb9b088c8d5fb183c"
+    },
+    {
+      "path": "鸣潮/中文/凌阳_ZH.zip",
+      "bytes": 213321022,
+      "sha256": "91bde5a9e2b5348daf68cc6da79c0018ff979181047d113162e6f452866bd829"
+    },
+    {
+      "path": "鸣潮/中文/卡提希娅_ZH.zip",
+      "bytes": 213479219,
+      "sha256": "5092a51916fede59f359235345ce9eb0cb58a8068f6416652b55cd0a803af5d6"
+    },
+    {
+      "path": "鸣潮/中文/吟霖_ZH.zip",
+      "bytes": 213494416,
+      "sha256": "7521b3b060cdd12c9bc790f6fe9ef54b20f96cb5c94a17bebaba4b0c0a490f54"
+    },
+    {
+      "path": "鸣潮/中文/坎特蕾拉_ZH.zip",
+      "bytes": 213454726,
+      "sha256": "ff326b627eb3efed19ac602608f9600f534cae84daac310f3c42d701c52ddd68"
+    },
+    {
+      "path": "鸣潮/中文/奇异的白猫_ZH.zip",
+      "bytes": 213420540,
+      "sha256": "f9fd7542f1baa332aa946e46d6acbf7a04d0d3b25abaaa40c3bda399e4afa270"
+    },
+    {
+      "path": "鸣潮/中文/奈亚拉_ZH.zip",
+      "bytes": 213242924,
+      "sha256": "1d0ed22bc67e9a47786fa718b1417c6be283ba323da7102a8a11993afe7c41de"
+    },
+    {
+      "path": "鸣潮/中文/女漂泊者_ZH.zip",
+      "bytes": 213518800,
+      "sha256": "ee0ab8440bdefbbabccd70825d7a2bbc1ff961cf1975469199a0bbed589c41bc"
+    },
+    {
+      "path": "鸣潮/中文/守岸人_ZH.zip",
+      "bytes": 213298229,
+      "sha256": "d022c7c132f3601e44fc5ab42d4f0884febd1ad547d9f1252a25561f7aa0d1a6"
+    },
+    {
+      "path": "鸣潮/中文/安可_ZH.zip",
+      "bytes": 213346487,
+      "sha256": "0f983c890e2cc0834d9f4d2a7f9bc1dae4ab78affcfd0bfcda0f1626240eb0d0"
+    },
+    {
+      "path": "鸣潮/中文/小女孩_ZH.zip",
+      "bytes": 213366357,
+      "sha256": "dda2b7431a2fb8081e95458ff1e336e75aa89c5b097eddd078172ef81cf928d5"
+    },
+    {
+      "path": "鸣潮/中文/小盈_ZH.zip",
+      "bytes": 213404886,
+      "sha256": "f8b6e95af5e93d61a6ae67c575b5c5b27c25d309f06db93e2d5eb7c072a70805"
+    },
+    {
+      "path": "鸣潮/中文/巴多里奥_ZH.zip",
+      "bytes": 213477006,
+      "sha256": "9fe04990922d28b0376741a13f765a00785cc6bdc2c2bdbec729a538dadb32d2"
+    },
+    {
+      "path": "鸣潮/中文/布兰特_ZH.zip",
+      "bytes": 213491988,
+      "sha256": "d5899f3b973a7a6a6260cc4e062961b2be3d16ed1dbb813d885064e4b0a543fd"
+    },
+    {
+      "path": "鸣潮/中文/弗洛洛_ZH.zip",
+      "bytes": 213483056,
+      "sha256": "60577961f23393e6638b8c5c6b70d869c237d65b31349f6591b104f77923ddec"
+    },
+    {
+      "path": "鸣潮/中文/忌炎_ZH.zip",
+      "bytes": 213126725,
+      "sha256": "6ebc3d5205253839626bb578398fe3572bbd78d1e0276f17dc66175d3762fb99"
+    },
+    {
+      "path": "鸣潮/中文/折枝_ZH.zip",
+      "bytes": 213277383,
+      "sha256": "92365e6f3e3fa316c5f7911a4105f51211923202b3e5b4b6b122011915ee7f5d"
+    },
+    {
+      "path": "鸣潮/中文/散华_ZH.zip",
+      "bytes": 213224097,
+      "sha256": "75ff2b83f819e1cec0f25d70cd6d2b6adb2460e6129c33706c25bc2b927fdb8b"
+    },
+    {
+      "path": "鸣潮/中文/文叔_ZH.zip",
+      "bytes": 213332585,
+      "sha256": "7ce9611f5644e5fc74166b138008a15027ca1fc07bb9994b2b41b62e2650fa4e"
+    },
+    {
+      "path": "鸣潮/中文/斯塔巴克斯_ZH.zip",
+      "bytes": 213336649,
+      "sha256": "d1e98e8717ad2e96065da11339d7e3d40375cbbcfe7985e0bb9a26a90c2b01a2"
+    },
+    {
+      "path": "鸣潮/中文/桃祈_ZH.zip",
+      "bytes": 213418709,
+      "sha256": "f2d806c5a7a3e487fe1b646148cd4b1a46463054ebad1dab6e04643ecd4989d0"
+    },
+    {
+      "path": "鸣潮/中文/椿_ZH.zip",
+      "bytes": 213469433,
+      "sha256": "a619922fe7e417a4ce06a7d35cd6ee36bf1e992682e32aa8aca904d4fd3d8610"
+    },
+    {
+      "path": "鸣潮/中文/洛可可_ZH.zip",
+      "bytes": 213435117,
+      "sha256": "caafcc3e64c596825559b308856e3c2db5e19c281c107437480b5dbf5bb0ed46"
+    },
+    {
+      "path": "鸣潮/中文/渊武_ZH.zip",
+      "bytes": 213466778,
+      "sha256": "665a9d00ba5e961eca6be16689c9412b734663d96c599c97d2f4e14521ccb013"
+    },
+    {
+      "path": "鸣潮/中文/灯灯_ZH.zip",
+      "bytes": 213561345,
+      "sha256": "c3ab13aabc9e587fd1810ad1612dc7655a72da6a222907db19c5674f1007b558"
+    },
+    {
+      "path": "鸣潮/中文/炽霞_ZH.zip",
+      "bytes": 213232531,
+      "sha256": "18c4712d72be7d36d0e02d806c3877ec642d5a5f6c7d46441bd0a1d8424afe53"
+    },
+    {
+      "path": "鸣潮/中文/爱蒂奇_ZH.zip",
+      "bytes": 213254280,
+      "sha256": "78efdfddf4a44c82f90b263128b14918aaaaf31b44888e56b234d9e36cf13520"
+    },
+    {
+      "path": "鸣潮/中文/珂莱塔_ZH.zip",
+      "bytes": 213659060,
+      "sha256": "9f823225e6108a9eec355ea04a13785e45b6fd0a404151850299fb6dc1e98a9d"
+    },
+    {
+      "path": "鸣潮/中文/男漂泊者_ZH.zip",
+      "bytes": 213269830,
+      "sha256": "7bc3844e28986ced9e68e8fc7875f609b43206fdf59ea3cbc58511ba480150ea"
+    },
+    {
+      "path": "鸣潮/中文/白芷_ZH.zip",
+      "bytes": 213222900,
+      "sha256": "9deb1adf2ddfd46f956152fbdb114cd0fc625673259701290520e99a3bdf946b"
+    },
+    {
+      "path": "鸣潮/中文/相里要_ZH.zip",
+      "bytes": 213412851,
+      "sha256": "618a814367d9c8ad1c35b7ba6c04dc228804a4dfa1dd4da13f8140c59622d062"
+    },
+    {
+      "path": "鸣潮/中文/禾盈_ZH.zip",
+      "bytes": 213575170,
+      "sha256": "5aab2c014aaa71380c61061c38374ea02d4bb9139df620460ee5834236f02ea3"
+    },
+    {
+      "path": "鸣潮/中文/秋水_ZH.zip",
+      "bytes": 213247364,
+      "sha256": "8f815d97d3b609aad28760b46b20dab167cb59af4b6ca31d5bc598c83c52244e"
+    },
+    {
+      "path": "鸣潮/中文/科波拉_ZH.zip",
+      "bytes": 213204063,
+      "sha256": "3f4f97083f67b802c2242567c60ba333a7ee4cc815bf9a23626448cc2ab76086"
+    },
+    {
+      "path": "鸣潮/中文/秧秧_ZH.zip",
+      "bytes": 213503562,
+      "sha256": "5d974b035b1047fbaa23bf16ef91d1de5e49b9541cbb70a3153d3825de744de0"
+    },
+    {
+      "path": "鸣潮/中文/维里奈_ZH.zip",
+      "bytes": 213180028,
+      "sha256": "5dae164c2ab196856bfdf0ab1f69102617a557223702f5829cb97d822dc9486e"
+    },
+    {
+      "path": "鸣潮/中文/芬莱克_ZH.zip",
+      "bytes": 213314907,
+      "sha256": "bebac5433f399fb9cc648bed6bfeffc124860865e79393c2359198065ff44254"
+    },
+    {
+      "path": "鸣潮/中文/英白拉多_ZH.zip",
+      "bytes": 213443761,
+      "sha256": "ad1e7400cfa1011dc8b0d05360974007fec79011055d034c7ae724ac6256e43e"
+    },
+    {
+      "path": "鸣潮/中文/莫特斐_ZH.zip",
+      "bytes": 213488493,
+      "sha256": "2cc4e0406057489c489dd4df2e6ff4e12a77a7615b4911f70d2e8cb121479a32"
+    },
+    {
+      "path": "鸣潮/中文/菲比_ZH.zip",
+      "bytes": 213317904,
+      "sha256": "441c9b1afebb4f6542ae1395d62da43fba93ce073f62ee0c3378184223c65f1b"
+    },
+    {
+      "path": "鸣潮/中文/贝诗_ZH.zip",
+      "bytes": 213168109,
+      "sha256": "4c62a27ab7539e41b3f474dff150d8b79ceebd5a025ed0031625fefd572ea5ac"
+    },
+    {
+      "path": "鸣潮/中文/赞妮_ZH.zip",
+      "bytes": 213315068,
+      "sha256": "aaace64e1883435c4f49e78fabdb342c968a1edfdb5ea0e64faae85032887dc0"
+    },
+    {
+      "path": "鸣潮/中文/辛夷_ZH.zip",
+      "bytes": 213159665,
+      "sha256": "c9946e3bb9999037dde8233e7df1d1a5d4d5ebe9b596585d9a0ec27849f3e3d5"
+    },
+    {
+      "path": "鸣潮/中文/达娜_ZH.zip",
+      "bytes": 213254426,
+      "sha256": "8e0115a83a0d679778ae3b8bcdce5fdd56fa97b0dfe7a31442cae3504b69edea"
+    },
+    {
+      "path": "鸣潮/中文/釉瑚_ZH.zip",
+      "bytes": 213229853,
+      "sha256": "8eeb69ae56af9283f55bfd68215104fcf286d2e75a3954a6fa7b67f38184f423"
+    },
+    {
+      "path": "鸣潮/中文/鉴心_ZH.zip",
+      "bytes": 213207498,
+      "sha256": "e778add31d7e621e59a7c274092a094d6aad3815a89d1b9bad007edaaacaaad9"
+    },
+    {
+      "path": "鸣潮/中文/长离_ZH.zip",
+      "bytes": 213258386,
+      "sha256": "ba9bad7bf2b9a71614f7239fb1d130545bbdb92d0f9a8a436603cea416cea42a"
+    },
+    {
+      "path": "鸣潮/中文/阿布_ZH.zip",
+      "bytes": 213488338,
+      "sha256": "d55ea69835b6abec82df9d53a95030974a5266b6f38721796bd7fbcafdab1b5d"
+    },
+    {
+      "path": "鸣潮/中文/阿莱克斯司铎_ZH.zip",
+      "bytes": 213608913,
+      "sha256": "69515f4526f9d04a51afc38df84699a93b4edd97a1e9466c2bc022e9a06d7346"
+    }
+  ]
+}

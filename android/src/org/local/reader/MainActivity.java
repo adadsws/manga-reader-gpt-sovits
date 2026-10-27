@@ -19,7 +19,7 @@ public class MainActivity extends Activity {
   static final int PAGE_BACKGROUND = Color.WHITE;
   static final int SECTION_HEADING_TEXT = Color.rgb(245, 124, 0);
   static final int DIVIDER_COLOR = Color.rgb(232, 234, 236);
-  static final int SETTING_ROW_HEIGHT = 112;
+  static final int SETTING_ROW_MIN_HEIGHT_DP = 56;
   static final int CONNECTED_TEXT = Color.rgb(20, 135, 75);
   static final int WARNING_TEXT = Color.rgb(180, 120, 20);
   static final int DISCONNECTED_TEXT = Color.rgb(190, 45, 45);
@@ -58,6 +58,10 @@ public class MainActivity extends Activity {
   interface IntFormatter { String format(int value); }
   interface TextSaver { void save(String value); }
 
+  int dp(int value) {
+    return (int) (value * getResources().getDisplayMetrics().density + 0.5f);
+  }
+
   static class SettingRow {
     final LinearLayout view;
     final TextView status;
@@ -80,9 +84,9 @@ public class MainActivity extends Activity {
   void divider(LinearLayout layout) {
     android.view.View divider = new android.view.View(this);
     divider.setBackgroundColor(DIVIDER_COLOR);
-    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(-1, 2);
-    params.leftMargin = 24;
-    params.rightMargin = 24;
+    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(-1, dp(1));
+    params.leftMargin = dp(12);
+    params.rightMargin = dp(12);
     layout.addView(divider, params);
   }
 
@@ -104,27 +108,28 @@ public class MainActivity extends Activity {
     titleView.setTextSize(16);
     titleView.setTextColor(NORMAL_TEXT);
     titleView.setGravity(android.view.Gravity.START | android.view.Gravity.CENTER_VERTICAL);
-    titleView.setPadding(24, 4, 8, 0);
-    text.addView(titleView, new LinearLayout.LayoutParams(-1, 56));
+    titleView.setPadding(dp(12), dp(3), dp(4), 0);
+    text.addView(titleView, new LinearLayout.LayoutParams(-1, -2));
     TextView statusView = new TextView(this);
     statusView.setText(status);
     statusView.setTextSize(14);
     statusView.setTextColor(SECONDARY_TEXT);
     statusView.setGravity(android.view.Gravity.START | android.view.Gravity.CENTER_VERTICAL);
-    statusView.setPadding(24, 0, 8, 4);
+    statusView.setPadding(dp(12), 0, dp(4), dp(3));
     statusView.setSingleLine(true);
     statusView.setEllipsize(android.text.TextUtils.TruncateAt.END);
-    text.addView(statusView, new LinearLayout.LayoutParams(-1, 56));
-    row.addView(text, new LinearLayout.LayoutParams(0, SETTING_ROW_HEIGHT, 1));
+    text.addView(statusView, new LinearLayout.LayoutParams(-1, -2));
+    row.addView(text, new LinearLayout.LayoutParams(0, -2, 1));
     if (click != null) {
       TextView arrow = new TextView(this);
       arrow.setText("›");
       arrow.setTextSize(24);
       arrow.setTextColor(SECONDARY_TEXT);
       arrow.setGravity(android.view.Gravity.CENTER);
-      row.addView(arrow, new LinearLayout.LayoutParams(56, SETTING_ROW_HEIGHT));
+      row.addView(arrow, new LinearLayout.LayoutParams(dp(28), dp(48)));
     }
-    layout.addView(row, new LinearLayout.LayoutParams(-1, SETTING_ROW_HEIGHT));
+    row.setMinimumHeight(dp(SETTING_ROW_MIN_HEIGHT_DP));
+    layout.addView(row, new LinearLayout.LayoutParams(-1, -2));
     divider(layout);
     return new SettingRow(row, statusView);
   }
@@ -168,7 +173,7 @@ public class MainActivity extends Activity {
     LinearLayout toolbar = new LinearLayout(this);
     toolbar.setOrientation(LinearLayout.HORIZONTAL);
     toolbar.setGravity(android.view.Gravity.CENTER_VERTICAL);
-    toolbar.setPadding(8, 24, 16, 0);
+    toolbar.setPadding(dp(4), dp(24), dp(8), 0);
     toolbar.setBackgroundColor(PAGE_BACKGROUND);
     toolbar.setElevation(4);
     if (back) {
@@ -182,7 +187,7 @@ public class MainActivity extends Activity {
       up.setGravity(android.view.Gravity.CENTER);
       up.setBackgroundColor(Color.TRANSPARENT);
       up.setOnClickListener(v -> setAdvancedVisible(false));
-      toolbar.addView(up, new LinearLayout.LayoutParams(64, 64));
+      toolbar.addView(up, new LinearLayout.LayoutParams(dp(48), dp(48)));
     }
     TextView toolbarTitle = new TextView(this);
     toolbarTitle.setText(title);
@@ -190,8 +195,8 @@ public class MainActivity extends Activity {
     toolbarTitle.setTypeface(Typeface.DEFAULT_BOLD);
     toolbarTitle.setTextColor(NORMAL_TEXT);
     toolbarTitle.setGravity(android.view.Gravity.CENTER_VERTICAL);
-    toolbar.addView(toolbarTitle, new LinearLayout.LayoutParams(0, 64, 1));
-    page.addView(toolbar, new LinearLayout.LayoutParams(-1, 88));
+    toolbar.addView(toolbarTitle, new LinearLayout.LayoutParams(0, dp(48), 1));
+    page.addView(toolbar, new LinearLayout.LayoutParams(-1, dp(72)));
     page.addView(content, new LinearLayout.LayoutParams(-1, 0, 1));
     return page;
   }
@@ -202,12 +207,12 @@ public class MainActivity extends Activity {
     heading.setTextSize(14);
     heading.setTypeface(Typeface.DEFAULT_BOLD);
     heading.setTextColor(SECTION_HEADING_TEXT);
-    heading.setPadding(24, 20, 24, 8);
+    heading.setPadding(dp(12), dp(10), dp(12), dp(4));
     LinearLayout.LayoutParams headingParams = new LinearLayout.LayoutParams(-1, -2);
     root.addView(heading, headingParams);
     LinearLayout content = new LinearLayout(this);
     content.setOrientation(LinearLayout.VERTICAL);
-    content.setPadding(0, 0, 0, 4);
+    content.setPadding(0, 0, 0, dp(2));
     LinearLayout.LayoutParams contentParams = new LinearLayout.LayoutParams(-1, -2);
     root.addView(content, contentParams);
     return content;
@@ -658,7 +663,7 @@ public class MainActivity extends Activity {
     input.setSingleLine();
     input.setText(current);
     input.setSelectAllOnFocus(true);
-    input.setPadding(24, 12, 24, 12);
+    input.setPadding(dp(12), dp(8), dp(12), dp(8));
     input.setInputType(
         android.text.InputType.TYPE_CLASS_TEXT
             | (uri
@@ -694,12 +699,13 @@ public class MainActivity extends Activity {
       IntSaver saver) {
     LinearLayout content = new LinearLayout(this);
     content.setOrientation(LinearLayout.VERTICAL);
-    content.setPadding(24, 8, 24, 8);
+    content.setPadding(dp(12), dp(4), dp(12), dp(4));
     TextView value = new TextView(this);
     value.setTextSize(18);
     value.setTextColor(NORMAL_TEXT);
     value.setGravity(android.view.Gravity.CENTER);
-    content.addView(value, new LinearLayout.LayoutParams(-1, 56));
+    value.setMinHeight(dp(28));
+    content.addView(value, new LinearLayout.LayoutParams(-1, -2));
     SeekBar slider = new SeekBar(this);
     slider.setMax((max - min) / step);
     int clamped = Math.max(min, Math.min(max, current));
@@ -744,7 +750,7 @@ public class MainActivity extends Activity {
     input.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
     input.setText(String.valueOf(current));
     input.setSelectAllOnFocus(true);
-    input.setPadding(24, 12, 24, 12);
+    input.setPadding(dp(12), dp(8), dp(12), dp(8));
     activeDialog =
         new AlertDialog.Builder(this)
             .setTitle(title + "（" + min + "–" + max + suffix + "）")
@@ -932,6 +938,7 @@ public class MainActivity extends Activity {
     connectionExecutor.execute(
             () -> {
               ConnectionVersionState state = null;
+              String reportedModel = "";
               String message = "";
               try {
                 java.net.HttpURLConnection c =
@@ -939,7 +946,7 @@ public class MainActivity extends Activity {
                         new java.net.URL(endpoint + "/pair").openConnection();
                 c.setRequestProperty("X-Reader-Token", secret);
                 c.setRequestProperty(
-                    "X-Reader-Version", String.valueOf(ReaderDefaults.READER_PROTOCOL_VERSION));
+                    "X-Reader-Version", ReaderDefaults.READER_PROTOCOL_VERSION);
                 c.setConnectTimeout(2500);
                 c.setReadTimeout(2500);
                 try {
@@ -951,6 +958,7 @@ public class MainActivity extends Activity {
                   } catch (Exception ignored) {
                   }
                   state = connectionVersionState(body);
+                  reportedModel = modelLabelFromPair(body);
                 } finally {
                   c.disconnect();
                 }
@@ -958,6 +966,7 @@ public class MainActivity extends Activity {
                 message = e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage();
               }
               ConnectionVersionState result = state;
+              String modelLabel = reportedModel;
               String detail = message;
               runOnUiThread(
                   () -> {
@@ -967,6 +976,11 @@ public class MainActivity extends Activity {
                       setConnectionStatus(result.text, result.color);
                     else
                       setConnectionStatus("电脑未连接：" + detail, DISCONNECTED_TEXT);
+                    if (result != null && !modelLabel.isEmpty() && modelStatus != null) {
+                      prefs.edit().putString("modelLabel", modelLabel).apply();
+                      status(modelStatus, modelLabel, !ReaderDefaults.MODEL_LABEL.equals(modelLabel));
+                      modelStatus.setContentDescription("当前朗读模型 " + modelLabel);
+                    }
                     connectionHandler.postDelayed(() -> checkConnection(), 5000);
                   });
             });
@@ -988,9 +1002,9 @@ public class MainActivity extends Activity {
   static ConnectionVersionState connectionVersionState(String body) {
     try {
       Object value = new org.json.JSONObject(body).opt("version");
-      if (value instanceof Number) {
-        int computerVersion = ((Number) value).intValue();
-        if (computerVersion == ReaderDefaults.READER_PROTOCOL_VERSION)
+      if (value instanceof String && ((String) value).matches("1\\.[0-9]+")) {
+        String computerVersion = (String) value;
+        if (computerVersion.equals(ReaderDefaults.READER_PROTOCOL_VERSION))
           return new ConnectionVersionState(
               "电脑已连接 · 版本 " + computerVersion, CONNECTED_TEXT);
         return new ConnectionVersionState(
@@ -1004,6 +1018,14 @@ public class MainActivity extends Activity {
         "电脑已连接 · 版本警告：电脑未报告有效版本（安卓 "
             + ReaderDefaults.READER_PROTOCOL_VERSION + "）",
         WARNING_TEXT);
+  }
+
+  static String modelLabelFromPair(String body) {
+    try {
+      return new org.json.JSONObject(body).optString("model_label", "");
+    } catch (Exception ignored) {
+      return "";
+    }
   }
 
   int number(EditText field, int fallback, int min, int max) {

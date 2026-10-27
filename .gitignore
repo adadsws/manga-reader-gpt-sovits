@@ -7,6 +7,8 @@
 !/models/gpt-sovits/
 /models/gpt-sovits/*
 !/models/gpt-sovits/蔚蓝档案-日语.md
+!/models/gpt-sovits/终末地-中文.md
+!/models/gpt-sovits/鸣潮-中文.md
 !/models/layout/
 /models/layout/*
 !/models/layout/magiv2.md
@@ -14,3 +16,5 @@
 __pycache__/
 # Ruff 原地格式化缓存。
 .ruff_cache/
+# pytest 原地测试缓存。
+.pytest_cache/

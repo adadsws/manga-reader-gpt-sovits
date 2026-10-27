@@ -173,7 +173,11 @@ class ReaderApiTests(unittest.TestCase):
         catalog={"models":[],"tree":[],"counts":{"total":0},"active_id":None}
         self.assertEqual(self.client.get("/models").status_code,401)
         with patch("server.app.model_catalog.scan",return_value=catalog):
-            self.assertEqual(self.client.get("/models",headers=self.auth).json(),catalog)
+            response=self.client.get("/models",headers=self.auth).json()
+            self.assertEqual({key:response[key] for key in catalog},catalog)
+            self.assertIn("validation",response)
+        self.assertEqual(self.client.get("/models/validation").status_code,401)
+        self.assertIn("status",self.client.get("/models/validation",headers=self.auth).json())
         selected={"id":"abc","name":"角色","version":"v4","state":"available"}
         with patch("server.app.model_catalog.select",return_value=selected) as choose, patch.object(store,"clear") as clear:
             response=self.client.post("/models/select",headers=self.auth,json={"model_id":"abc"})
@@ -191,11 +195,11 @@ class ReaderApiTests(unittest.TestCase):
     def test_pair_checks_token(self):
         self.assertEqual(self.client.get("/pair").status_code, 401)
         pair = self.client.get(
-            "/pair", headers={**self.auth, "X-Reader-Version": "4"}
+            "/pair", headers={**self.auth, "X-Reader-Version": "1.4"}
         )
         self.assertEqual(pair.status_code, 200)
         self.assertEqual(pair.json()["version"], READER_PROTOCOL_VERSION)
-        self.assertEqual(self.client.get("/health").json()["version"], 4)
+        self.assertEqual(self.client.get("/health").json()["version"], "1.4")
 
     def test_computer_warns_for_old_or_different_android_without_blocking(self):
         import server.app as reader_app
@@ -205,24 +209,29 @@ class ReaderApiTests(unittest.TestCase):
             with patch("server.app.event") as debug:
                 self.assertEqual(observe_android_version(None), "missing")
                 debug.assert_called_once_with(
-                    "android_version_missing", computer_version=4
+                    "android_version_missing", computer_version="1.4"
                 )
                 debug.reset_mock()
                 self.assertEqual(observe_android_version(None), "missing")
                 debug.assert_not_called()
-                self.assertEqual(observe_android_version("3"), "mismatch")
+                self.assertEqual(observe_android_version("1.3"), "mismatch")
                 debug.assert_called_once_with(
                     "android_version_mismatch",
-                    android_version=3,
-                    computer_version=4,
+                    android_version="1.3",
+                    computer_version="1.4",
                 )
                 debug.reset_mock()
-                self.assertEqual(observe_android_version("4"), "match")
+                self.assertEqual(observe_android_version("1.3"), "mismatch")
                 debug.assert_not_called()
-                self.assertEqual(observe_android_version("invalid"), "missing")
+                self.assertEqual(observe_android_version("1.4"), "match")
+                debug.assert_not_called()
+                self.assertEqual(observe_android_version("4"), "missing")
                 debug.assert_called_once_with(
-                    "android_version_missing", computer_version=4
+                    "android_version_missing", computer_version="1.4"
                 )
+                debug.reset_mock()
+                self.assertEqual(observe_android_version("invalid"), "missing")
+                debug.assert_not_called()
             response = self.client.get(
                 "/pair", headers={"X-Reader-Token": settings["token"]}
             )

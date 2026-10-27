@@ -20,6 +20,9 @@ public class ModelPicker {
   AlertDialog dialog;
   LinearLayout content;
   TextView summary;
+  final Handler progressHandler=new Handler(Looper.getMainLooper());
+  Runnable progressPoll;
+  String countsText="";
 
   public ModelPicker(Activity activity, String base, String token, Listener listener) {
     this.activity=activity;this.base=base.replaceAll("/$","");this.token=token;this.listener=listener;
@@ -33,11 +36,13 @@ public class ModelPicker {
     Button refresh=new Button(activity);refresh.setText("刷新模型目录");refresh.setContentDescription("刷新模型目录");refresh.setOnClickListener(v->load());root.addView(refresh);
     content=new LinearLayout(activity);content.setOrientation(LinearLayout.VERTICAL);ScrollView scroll=new ScrollView(activity);scroll.addView(content);root.addView(scroll,new LinearLayout.LayoutParams(-1,0,1));
     dialog=new AlertDialog.Builder(activity).setTitle("选择朗读模型").setView(root).setNegativeButton("关闭",null).create();dialog.show();
+    dialog.setOnDismissListener(value->{if(progressPoll!=null)progressHandler.removeCallbacks(progressPoll);});
     Window window=dialog.getWindow();if(window!=null)window.setLayout(-1,(int)(activity.getResources().getDisplayMetrics().heightPixels*.85f));
     load();
   }
 
   void load() {
+    if(progressPoll!=null)progressHandler.removeCallbacks(progressPoll);
     summary.setText("正在读取电脑模型目录…");content.removeAllViews();
     new Thread(()->{
       try {
@@ -49,9 +54,36 @@ public class ModelPicker {
 
   void render(JSONObject result) {
     content.removeAllViews();JSONObject counts=result.optJSONObject("counts");
-    summary.setText(counts==null?"模型目录已更新":String.format(java.util.Locale.CHINA,"共%d项 · 可用%d · 未验证%d · 不完整%d · 加载失败%d",counts.optInt("total"),counts.optInt("available"),counts.optInt("unverified"),counts.optInt("incomplete"),counts.optInt("failed")));
+    countsText=counts==null?"模型目录已更新":String.format(java.util.Locale.CHINA,"共%d项 · 可用%d · 未验证%d · 不完整%d · 加载失败%d",counts.optInt("total"),counts.optInt("available"),counts.optInt("unverified"),counts.optInt("incomplete"),counts.optInt("failed"));
+    updateProgress(result.optJSONObject("validation"));
     JSONArray tree=result.optJSONArray("tree");if(tree==null||tree.length()==0){showError(result.optString("error","没有发现模型"));return;}
     addNodes(content,tree,0);
+  }
+
+  void updateProgress(JSONObject validation) {
+    if(validation==null){summary.setText(countsText);return;}
+    String status=validation.optString("status");
+    if("running".equals(status))summary.setText(countsText+String.format(java.util.Locale.CHINA," · 电脑验证中 %d/%d",validation.optInt("completed"),validation.optInt("total")));
+    else if("idle".equals(status))summary.setText(countsText+" · 等待电脑自动验证");
+    else if("failed".equals(status))summary.setText(countsText+" · 电脑自动验证中断");
+    else summary.setText(countsText);
+    if("running".equals(status)||"idle".equals(status))scheduleProgressPoll();
+  }
+
+  void scheduleProgressPoll() {
+    if(progressPoll!=null)progressHandler.removeCallbacks(progressPoll);
+    progressPoll=()->new Thread(()->{
+      try {
+        JSONObject progress=request("GET","/models/validation",null);
+        activity.runOnUiThread(()->{
+          if(dialog==null||!dialog.isShowing())return;
+          String status=progress.optString("status");
+          if("complete".equals(status)||"failed".equals(status))load();
+          else updateProgress(progress);
+        });
+      } catch(Exception ignored) { activity.runOnUiThread(()->{if(dialog!=null&&dialog.isShowing())scheduleProgressPoll();}); }
+    }).start();
+    progressHandler.postDelayed(progressPoll,3000);
   }
 
   void addNodes(LinearLayout parent, JSONArray nodes, int depth) {

@@ -9,12 +9,35 @@ from tools.build_android import build, output_path
 
 ROOT = Path(__file__).resolve().parents[1]
 ADB = ROOT / '~temp/android-sdk/platform-tools/adb.exe'
+READER_SERIAL = None
+
+def find_reader_serial():
+    """只查找官方 SDK 中运行的 ReaderAosp35，避开其他 AVD 占用的端口。"""
+    devices = subprocess.check_output([str(ADB), 'devices'], timeout=30).decode('utf-8', errors='replace')
+    matches = []
+    for line in devices.splitlines():
+        parts = line.split()
+        if len(parts) < 2 or not parts[0].startswith('emulator-') or parts[1] != 'device':
+            continue
+        serial = parts[0]
+        try:
+            name = subprocess.check_output(
+                [str(ADB), '-s', serial, 'emu', 'avd', 'name'], timeout=15
+            ).decode('utf-8', errors='replace').replace('\r', '').splitlines()[0].strip()
+        except (subprocess.CalledProcessError, subprocess.TimeoutExpired, IndexError):
+            continue
+        if name == 'ReaderAosp35':
+            matches.append(serial)
+    if len(matches) != 1:
+        raise RuntimeError(f'需要唯一的 ReaderAosp35，当前找到 {len(matches)} 个')
+    return matches[0]
 
 def adb(*args):
-    return subprocess.check_output([str(ADB), '-s', 'emulator-5554', *args], timeout=120).decode('utf-8', errors='replace').replace('\r', '')
+    return subprocess.check_output([str(ADB), '-s', READER_SERIAL, *args], timeout=120).decode('utf-8', errors='replace').replace('\r', '')
 
 if __name__ == '__main__':
     parser=argparse.ArgumentParser(); parser.add_argument('--out',default='~outputs-intermediate/evidence/overlay-auto-20260920'); args=parser.parse_args()
+    READER_SERIAL = find_reader_serial()
     console_name = adb('emu', 'avd', 'name').splitlines()
     avd_name = console_name[0].strip() if console_name else adb('shell', 'getprop', 'ro.boot.qemu.avd_name').strip()
     if avd_name != 'ReaderAosp35':

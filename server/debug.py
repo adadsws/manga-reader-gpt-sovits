@@ -11,8 +11,9 @@ LOG = Path(__file__).resolve().parents[1] / '~temp/logs/debug.jsonl'
 _guard = threading.Lock()
 _logger = None
 FIELDS = {'bytes', 'rows', 'chunks', 'chunk', 'characters', 'seconds', 'status', 'index',
-          'android_version', 'computer_version'}
-REASON_EVENTS = {'tts_error', 'model_load_error', 'warmup_error'}
+          'android_version', 'computer_version', 'total', 'completed', 'failed'}
+REASON_EVENTS = {'tts_error', 'model_load_error', 'warmup_error',
+                 'model_validation_item_failed', 'model_validation_batch_failed'}
 
 def event(name, **fields):
     global _logger

@@ -1,6 +1,6 @@
 # 漫画朗读 · GPT-SoVITS
 
-[介绍视频（哔哩哔哩）：【工具】让任意 GPT-SoVITS 模型朗读任意漫画](https://www.bilibili.com/video/BV1ooan6iEgm/)
+[简体中文](README.md) · [English](README_EN.md)
 
 在 Android 上打开漫画，点击浮窗即可按分镜顺序朗读文字，读完还可自动翻页。你可以选择自己喜欢的 GPT-SoVITS 语音模型作为朗读音色，并调整语速、停顿等设置。
 
@@ -15,39 +15,34 @@
 
 - **RapidOCR（PP-OCRv6）** 识别漫画页面中的文字。
 - **Magi v2** 检测分镜和文字区域，辅助确定阅读顺序。
-- **GPT-SoVITS** 用所选角色的声音朗读文字。你可以把自己喜欢的、与当前 GPT-SoVITS 运行版本兼容的语音模型放进电脑端模型目录，在 Android 应用中选择；“蔚蓝档案·日奈”只是项目提供的可复现示例。模型需有 GPT `.ckpt`、SoVITS `.pth` 和参考音频，切换时会实际加载并试读。
+- **GPT-SoVITS** 默认使用“鸣潮·菲比_ZH”朗读，也可在 Android 中选择其他兼容音色。模型需有 GPT `.ckpt`、SoVITS `.pth` 和参考音频，切换时会实际加载并试读。
+
+电脑服务启动后会在后台逐个加载并试读尚未验证的完整模型，已通过的模型直接复用记录。Android 模型目录保留每个文件夹的真实状态，显示电脑验证进度，并在完成后自动刷新；验证失败会显示该模型的具体原因。
 
 ## 效果预览
 
-<p align="center">
-  <img src="docs/readme-assets/manga-page.jpg" alt="漫画页面预览" width="420">
-</p>
-
-<audio controls preload="metadata" src="https://raw.githubusercontent.com/adadsws/manga-reader-gpt-sovits/main/docs/readme-assets/reading-preview.wav">
-  当前页面不支持直接播放音频。
-</audio>
-
-▶ [下载试听音频](docs/readme-assets/reading-preview.wav)
+[影片示例：朗读浮窗演示](https://www.bilibili.com/video/BV1ooan6iEgm/)
 
 | 连接与设置 | 选择角色 |
 |---|---|
 | <img src="docs/readme-assets/settings.png" alt="连接与设置" width="360"> | <img src="docs/readme-assets/models.png" alt="选择角色" width="360"> |
 | 自动翻页设置 | 朗读浮窗 |
-| <img src="docs/readme-assets/advanced.png" alt="自动翻页设置" width="360"> | <img src="docs/readme-assets/overlay.png" alt="朗读浮窗" width="360"> |
+| <img src="docs/readme-assets/advanced.png" alt="自动翻页设置" width="360"> | <img src="docs/readme-assets/overlay.png" alt="朗读浮窗，使用 0012.jpg 示例漫画" width="360"><br><audio controls preload="metadata" src="docs/readme-assets/reading-preview.wav">当前页面不支持直接播放音频。</audio><br>▶ [下载菲比_ZH朗读本页的音频](docs/readme-assets/reading-preview.wav) |
 
 ## 第一次准备
 
 需要 Windows 电脑和 NVIDIA 显卡。先按当前电脑修改 `config/runtime.json`、`config/reader.json` 和 `config/tts.yaml` 中的路径，再在项目目录依次运行：
 
 ```powershell
-python tools/download_blue_archive_hina.py
+python tools/download_mingchao_zh.py --only 菲比_ZH
+python tools/prepare_mingchao_profiles.py --only 菲比_ZH
 powershell -NoProfile -ExecutionPolicy Bypass -File tools/prepare_runtime.ps1
 python tools/prepare_layout.py
 ```
 
-第一条命令只下载“蔚蓝档案·日奈”这个示例角色，已有兼容的 GPT-SoVITS 语音模型时可以跳过；第二、三条命令准备运行环境和漫画分析模型。
+前两条命令准备默认音色“菲比_ZH”的模型、参考提示音频和本机头像；已有模型时会校验，不覆盖。其余命令准备运行环境和漫画分析模型。
 
-模型来源及重新下载方法见[日奈模型说明](models/gpt-sovits/蔚蓝档案-日语.md)和[Magi 模型说明](models/layout/magiv2.md)。
+模型来源及重新下载方法见 [鸣潮中文模型说明](models/gpt-sovits/鸣潮-中文.md) 和 [Magi 模型说明](models/layout/magiv2.md)。
 
 ## 路线一：安卓模拟器
 
@@ -61,7 +56,7 @@ python tools/prepare_avd.py
 python tools/build_android.py
 ```
 
-以后双击 [启动电脑服务和安卓模拟器.bat](启动电脑服务和安卓模拟器.bat)，等待应用显示“电脑已连接 · 版本 4”。漫画图片可以直接拖进模拟器窗口打开。启动器会把模拟器窗口移入当前显示器的可用区域；窗口过高时自动等比例缩小，标题栏不会再跑到屏幕上方。
+以后双击 [启动电脑服务和安卓模拟器.bat](启动电脑服务和安卓模拟器.bat)，等待应用显示“电脑已连接 · 版本 1.4”。漫画图片可以直接拖进模拟器窗口打开。启动器会把模拟器窗口移入当前显示器的可用区域；窗口过高时自动等比例缩小，标题栏不会再跑到屏幕上方。
 
 单独双击 [仅启动安卓模拟器.bat](仅启动安卓模拟器.bat) 会先停止本项目由启动器记录的电脑服务，因此安卓应显示“电脑未连接”；它不会结束无法确认属于本项目的 Python 进程。
 
@@ -98,4 +93,4 @@ python tools/build_android.py
 - 语音失败：点浮窗中的“查看完整错误”，同时检查电脑窗口中的提示。
 - 停止电脑服务：在项目目录运行 `仅启动电脑服务.bat stop`。
 
-版本变化见[更新记录](CHANGELOG.md)。
+版本变化见 [更新记录](CHANGELOG.md)。

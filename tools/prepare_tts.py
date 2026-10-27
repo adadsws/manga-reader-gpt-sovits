@@ -13,6 +13,8 @@ def prepare():
     source = ROOT / "reference/tts/GPT-SoVITS"
     view = ROOT / "~temp/gpt-sovits"
     pre = Path(settings["pretrained"])
+    if not pre.is_absolute():
+        pre = ROOT / pre
     if not pre.is_dir():
         raise FileNotFoundError("请在 config/runtime.json 配置 GPT-SoVITS 基础模型目录")
     shutil.copytree(source, view, dirs_exist_ok=True)
@@ -26,12 +28,9 @@ def prepare():
             shutil.copy2(a, b)
         return b
 
-    shutil.copytree(
-        pre,
-        view / "GPT_SoVITS/pretrained_models",
-        copy_function=link,
-        dirs_exist_ok=True,
-    )
+    target = view / "GPT_SoVITS/pretrained_models"
+    if pre.resolve() != target.resolve():
+        shutil.copytree(pre, target, copy_function=link, dirs_exist_ok=True)
     for name in ["G2PWModel", "ja_userdic"]:
         src = pre / "text" / name
         if src.exists():

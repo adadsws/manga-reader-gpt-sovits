@@ -5,6 +5,7 @@ import io
 import wave
 import hashlib
 import math
+import re
 import threading
 import time
 import urllib.request
@@ -19,7 +20,8 @@ from .model_catalog import ModelCatalog
 from .history import HistoryStore, compound_key, digest_bytes, digest_json
 
 ROOT = Path(__file__).resolve().parents[1]
-READER_PROTOCOL_VERSION = 4
+READER_PROTOCOL_VERSION = "1.4"
+READER_VERSION_PATTERN = re.compile(r"1\.[0-9]+\Z")
 settings = json.loads((ROOT / "config/reader.json").read_text(encoding="utf-8"))
 app = FastAPI(title="漫画朗读电脑服务")
 store = PageStore()
@@ -47,6 +49,8 @@ warmup_lock = asyncio.Lock()
 warmup_state = {"status": "cold", "seconds": 0.0, "steps": {}}
 pair_version_lock = threading.Lock()
 last_android_version_state = None
+model_validation_state = {"status": "idle", "total": 0, "completed": 0, "failed": 0, "current": "", "error": ""}
+model_validation_task = None
 
 
 @app.middleware("http")
@@ -152,6 +156,13 @@ def audio_history_key(text, asr_check, speed_factor):
 
 @app.get("/health")
 def health():
+    if model_catalog.active_id is None:
+        model_catalog.scan()
+    active_model = model_catalog.last_scan.get(model_catalog.active_id)
+    model_label = (
+        f"{active_model['name']} · {active_model['version']} · {active_model['checkpoint']}"
+        if active_model else ""
+    )
     ocr_status = {
         "requested_device": settings.get("ocr_device", "cuda"),
         "backend": getattr(ocr, "ocr_backend", "not_loaded"),
@@ -160,7 +171,7 @@ def health():
         "layout_backend": getattr(getattr(ocr, "layout", None), "device", "not_loaded"),
         "failure_policy": "strict_no_device_fallback",
     }
-    return {"status": "ok", "voice": settings.get("voice", "hina"), "voice_name": settings.get("voice_name", settings.get("voice", "hina")), "model_version": settings.get("model_version", "v4"), "active_model_id": model_catalog.active_id, "processing": "computer", "version": READER_PROTOCOL_VERSION, "warmup_status": warmup_state["status"], "history": {"lookup": "exact_memory", "persistence": "sqlite_wal_async", "writer_errors": len(history.errors)}, "ocr": ocr_status, "asr": asr_status(), "speech_policy": {"normalization": "t2s_skip_english_kana", "max_chunk_characters": None if settings.get("speech_mode") == "native" else 24, "text_split_method": settings.get("text_split_method", "cut2"), "mode": settings.get("speech_mode", "bounded"), "unit": "panel_sentence", "guard": settings.get("speech_guard", "off"), "repetition_penalty": settings.get("repetition_penalty", 1.35), "parallel_infer": settings.get("tts_parallel_infer", False), "batch_size": settings.get("tts_batch_size", 1), "seed": 42}}
+    return {"status": "ok", "voice": settings.get("voice", "菲比_ZH"), "voice_name": settings.get("voice_name", settings.get("voice", "菲比_ZH")), "model_version": settings.get("model_version", "v4"), "active_model_id": model_catalog.active_id, "model_label": model_label, "processing": "computer", "version": READER_PROTOCOL_VERSION, "warmup_status": warmup_state["status"], "history": {"lookup": "exact_memory", "persistence": "sqlite_wal_async", "writer_errors": len(history.errors)}, "ocr": ocr_status, "asr": asr_status(), "speech_policy": {"normalization": "t2s_skip_english_kana", "max_chunk_characters": None if settings.get("speech_mode") == "native" else 24, "text_split_method": settings.get("text_split_method", "cut2"), "mode": settings.get("speech_mode", "bounded"), "unit": "panel_sentence", "guard": settings.get("speech_guard", "off"), "repetition_penalty": settings.get("repetition_penalty", 1.35), "parallel_infer": settings.get("tts_parallel_infer", False), "batch_size": settings.get("tts_batch_size", 1), "seed": 42}}
 
 
 @app.get("/pair")
@@ -172,12 +183,7 @@ def pair(request: Request):
 
 def observe_android_version(raw_version):
     global last_android_version_state
-    android_version = None
-    if raw_version is not None:
-        try:
-            android_version = int(raw_version)
-        except (TypeError, ValueError):
-            pass
+    android_version = raw_version if isinstance(raw_version, str) and READER_VERSION_PATTERN.fullmatch(raw_version) else None
     if android_version is None:
         state = ("missing", None)
     elif android_version == READER_PROTOCOL_VERSION:
@@ -254,7 +260,50 @@ async def warmup(request: Request):
 @app.get("/models")
 def models(request: Request):
     authorize(request)
-    return model_catalog.scan()
+    return {**model_catalog.scan(), "validation": dict(model_validation_state)}
+
+
+async def validate_models_in_background():
+    try:
+        async with tts_lock:
+            await asyncio.to_thread(model_catalog.ensure_loaded)
+        catalog = await asyncio.to_thread(model_catalog.scan)
+        pending = [item for item in catalog["models"] if item["selectable"] and item["state"] in ("unverified", "failed")]
+        model_validation_state.update(status="running", total=len(pending), completed=0, failed=0, current="", error="")
+        event("model_validation_batch_start", total=len(pending))
+        for item in pending:
+            model_validation_state["current"] = item["name"]
+            try:
+                async with tts_lock:
+                    await asyncio.to_thread(model_catalog.validate_one, item["id"], lambda candidate: synthesize_chunk("模型测试。", model=candidate))
+            except Exception as exc:
+                model_validation_state["failed"] += 1
+                event("model_validation_item_failed", model_id=item["id"], reason=str(exc))
+                if model_catalog.loaded_id is None:
+                    raise RuntimeError("当前模型恢复失败，批量验证已停止：" + str(exc)) from exc
+            else:
+                event("model_validation_item_ready", model_id=item["id"])
+            model_validation_state["completed"] += 1
+        model_validation_state.update(status="complete", current="")
+        event("model_validation_batch_complete", total=len(pending), failed=model_validation_state["failed"])
+    except Exception as exc:
+        model_validation_state.update(status="failed", current="", error=str(exc))
+        event("model_validation_batch_failed", reason=str(exc))
+
+
+@app.post("/models/validation/start")
+async def start_model_validation(request: Request):
+    global model_validation_task
+    authorize(request)
+    if model_validation_task is None:
+        model_validation_task = asyncio.create_task(validate_models_in_background())
+    return dict(model_validation_state)
+
+
+@app.get("/models/validation")
+def model_validation_progress(request: Request):
+    authorize(request)
+    return dict(model_validation_state)
 
 
 @app.get("/models/{model_id}/avatar")
@@ -349,7 +398,7 @@ async def page(request: Request):
             skipped_stages = ["text_prepare"]
             event("history_hit", stage="ocr")
         else:
-            sentences = prepare_panel_sentences(raw_rows, settings.get("voice", "hina"))
+            sentences = prepare_panel_sentences(raw_rows, settings.get("voice", "菲比_ZH"))
         text_key = reading_text_key(sentences)
         if reuse_history and match_stage == "none":
             text_hit = history.lookup_page("text", text_key)
@@ -422,13 +471,13 @@ async def corrected_page(request: Request):
     input_body = text.encode("utf-8")
     input_sha = digest_bytes(input_body)
     sentences = [
-        {"original": t, "text": t, "box": [], "confidence": 1.0, "speaker_id": "hina"}
+        {"original": t, "text": t, "box": [], "confidence": 1.0, "speaker_id": settings.get("voice", "菲比_ZH")}
         for t in split_sentences(text)
     ]
     if not sentences:
         raise HTTPException(422, "至少保留一句文字")
     for row in sentences:
-        row["speaker_id"] = settings.get("voice", "hina")
+        row["speaker_id"] = settings.get("voice", "菲比_ZH")
     sentences = merge_page(sentences)
     if not sentences:
         raise HTTPException(422, "没有可朗读的中文或数字")
@@ -458,15 +507,15 @@ async def corrected_page(request: Request):
             "skipped_stages": []}
 
 
-def synthesize_chunk(text, seed=None, speed_factor=1.0):
+def synthesize_chunk(text, seed=None, speed_factor=1.0, model=None):
     text = normalize_speech_text(text)
     # 切分策略来自配置；native 模式将完整朗读单元交给固定上游原生切句。
     payload = {
         "text": text,
         "text_lang": "zh",
-        "ref_audio_path": settings["reference_audio"],
-        "prompt_text": settings["reference_text"],
-        "prompt_lang": settings.get("prompt_lang", "ja"),
+        "ref_audio_path": str(model["reference"]) if model else settings["reference_audio"],
+        "prompt_text": model["reference_text"] if model else settings["reference_text"],
+        "prompt_lang": model["prompt_lang"] if model else settings.get("prompt_lang", "ja"),
         "text_split_method": settings.get("text_split_method", "cut2"),
         "batch_size": settings.get("tts_batch_size", 1),
         "media_type": "wav",

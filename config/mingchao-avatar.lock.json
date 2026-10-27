@@ -1,0 +1,349 @@
+{
+  "purpose": "本机鸣潮中文模型角色头像；仅本机使用，图像不纳入 Git 或远程发布",
+  "sources": {
+    "BWIKI": "https://wiki.biligame.com/wutheringwaves/人物网络",
+    "official_rover": "https://wiki.kurobbs.com/mc/catalogue/list?fid=1322&sid=1384&thid=1521"
+  },
+  "avatars": {
+    "「角」": {
+      "url": "https://patchwiki.biligame.com/images/wutheringwaves/8/87/qg4wej8xrtu1b7iae7izc6jiuqvtyzm.png",
+      "source_page": "https://wiki.biligame.com/wutheringwaves/敌人/角",
+      "sha256": "00af3936d2848b40ce63c64b6e0d0e5920fedd4757f9cc3a919278a495fb0503",
+      "bytes": 123972,
+      "size": [
+        256,
+        256
+      ]
+    },
+    "丹瑾": {
+      "url": "https://patchwiki.biligame.com/images/wutheringwaves/8/82/9r90xerfvtlw53mo1e9k0os0jncltrs.png",
+      "source_page": "https://wiki.biligame.com/wutheringwaves/人物网络",
+      "sha256": "b4a218ed3dd92cb0b017c0c0214d0a0c87df7701d962c5986773071361f83098",
+      "bytes": 304961,
+      "size": [
+        500,
+        500
+      ]
+    },
+    "今汐": {
+      "url": "https://patchwiki.biligame.com/images/wutheringwaves/a/ae/ghcsfzxapanl8m13hfyzvnlephpcwzy.png",
+      "source_page": "https://wiki.biligame.com/wutheringwaves/人物网络",
+      "sha256": "eb8a0cb0b32d3f2e409f4a59dc59f2dcd19414cdf6f567350d777846462583d6",
+      "bytes": 109720,
+      "size": [
+        256,
+        256
+      ]
+    },
+    "凌阳": {
+      "url": "https://patchwiki.biligame.com/images/wutheringwaves/8/8b/rwt30us28a8xktqzaj7brkwx2pf0ul6.png",
+      "source_page": "https://wiki.biligame.com/wutheringwaves/人物网络",
+      "sha256": "256e08ab6344b2043d808113078f668b78a33e4bd453edac4de6adf45b3a2ca5",
+      "bytes": 299034,
+      "size": [
+        500,
+        500
+      ]
+    },
+    "卡提希娅": {
+      "url": "https://patchwiki.biligame.com/images/wutheringwaves/e/eb/advpgkdvk7mpkjb4crynn83xgy52xe0.png",
+      "source_page": "https://wiki.biligame.com/wutheringwaves/人物网络",
+      "sha256": "9aa1d19fdb18e63b6f985b84767b7597571e7242b06b4da3dce8ff4cf22254c4",
+      "bytes": 144626,
+      "size": [
+        256,
+        256
+      ]
+    },
+    "吟霖": {
+      "url": "https://patchwiki.biligame.com/images/wutheringwaves/1/19/3easfs3vozthjj2wop2b4xvke4yp9oh.png",
+      "source_page": "https://wiki.biligame.com/wutheringwaves/人物网络",
+      "sha256": "425fea7631dc17f17d256d556ecccbfa526e86f446e7c353c624cb5469298ca8",
+      "bytes": 246596,
+      "size": [
+        500,
+        500
+      ]
+    },
+    "坎特蕾拉": {
+      "url": "https://patchwiki.biligame.com/images/wutheringwaves/9/91/al2n0oy0k24v57iodxjtzmy3q2e2bfz.png",
+      "source_page": "https://wiki.biligame.com/wutheringwaves/人物网络",
+      "sha256": "4da67f8e0d66b80185cae53c4e0d383d163320ead4a673ac18f036a2110515b3",
+      "bytes": 131342,
+      "size": [
+        256,
+        256
+      ]
+    },
+    "女漂泊者": {
+      "url": "https://prod-alicdn-community.kurobbs.com/newHead/aki/woman.png",
+      "source_page": "https://wiki.kurobbs.com/mc/item/1429461100965666816",
+      "sha256": "a1ca11d3c31b034ebbf41fc1b4924d65f034075b645842c443e0eee39c2685d6",
+      "bytes": 324058,
+      "size": [
+        500,
+        500
+      ]
+    },
+    "守岸人": {
+      "url": "https://patchwiki.biligame.com/images/wutheringwaves/1/1e/5ddcon1p8deoqo10e82iey5yahr8j12.png",
+      "source_page": "https://wiki.biligame.com/wutheringwaves/人物网络",
+      "sha256": "838fa37ec420f610f954e12be9908646c17ccbb7af06c654a20049426eb08d6c",
+      "bytes": 118227,
+      "size": [
+        256,
+        256
+      ]
+    },
+    "安可": {
+      "url": "https://patchwiki.biligame.com/images/wutheringwaves/d/db/o9tt5ueuukxy1mdzugxqaqeotpby2sa.png",
+      "source_page": "https://wiki.biligame.com/wutheringwaves/人物网络",
+      "sha256": "67da31db807e5b5ffb7a80735bf0f3b77ac8413f55a604ec3804d27d449a7160",
+      "bytes": 307151,
+      "size": [
+        500,
+        500
+      ]
+    },
+    "布兰特": {
+      "url": "https://patchwiki.biligame.com/images/wutheringwaves/7/74/kgn21w6d56lkf7uwytljm4x8o7tlb1g.png",
+      "source_page": "https://wiki.biligame.com/wutheringwaves/人物网络",
+      "sha256": "501ce4b658b83702d857974a4ed8b9a29f4ef4eaa16da5eb37846cc081f0ae84",
+      "bytes": 136874,
+      "size": [
+        256,
+        256
+      ]
+    },
+    "弗洛洛": {
+      "url": "https://patchwiki.biligame.com/images/wutheringwaves/8/88/ps2n75ra2dia1qpxzz4lkujqqfdfy1q.png",
+      "source_page": "https://wiki.biligame.com/wutheringwaves/人物网络",
+      "sha256": "3074ef04925ffbd6de51417b37cf387647f84f97aa8721ff835b2268994733c4",
+      "bytes": 108277,
+      "size": [
+        256,
+        256
+      ]
+    },
+    "忌炎": {
+      "url": "https://patchwiki.biligame.com/images/wutheringwaves/6/68/hcalmahrzib2jpisjoctspgbqmhf68m.png",
+      "source_page": "https://wiki.biligame.com/wutheringwaves/人物网络",
+      "sha256": "768974b4195b1e9486ce4ae226d1e3a63c0b061cacb22dbbcd22e61eb98b1ec4",
+      "bytes": 324845,
+      "size": [
+        500,
+        500
+      ]
+    },
+    "折枝": {
+      "url": "https://patchwiki.biligame.com/images/wutheringwaves/5/59/hkyoajfawmgo6606dw2exkg07libxel.png",
+      "source_page": "https://wiki.biligame.com/wutheringwaves/人物网络",
+      "sha256": "a551821435fba0d706a297586fc81e42f1a1725ced96aad1d3845e10fb5fff49",
+      "bytes": 139618,
+      "size": [
+        256,
+        256
+      ]
+    },
+    "散华": {
+      "url": "https://patchwiki.biligame.com/images/wutheringwaves/8/85/0w4lf5mb9qac6ghhxflwtsuvxd19ndf.png",
+      "source_page": "https://wiki.biligame.com/wutheringwaves/人物网络",
+      "sha256": "7e6b431d1acf5844b896eee6e117acda55ae40da505ab7618da342d1d0a17492",
+      "bytes": 345447,
+      "size": [
+        500,
+        500
+      ]
+    },
+    "桃祈": {
+      "url": "https://patchwiki.biligame.com/images/wutheringwaves/9/97/87zb4yzm6ieb8qh5sy5jevftlqvveh8.png",
+      "source_page": "https://wiki.biligame.com/wutheringwaves/人物网络",
+      "sha256": "627666f3c19b52eb7fa54dc1dea538a56a375eca262c11231ea0b912725c9777",
+      "bytes": 297953,
+      "size": [
+        500,
+        500
+      ]
+    },
+    "椿": {
+      "url": "https://patchwiki.biligame.com/images/wutheringwaves/a/aa/ers1kohfh71z0tinwvtinwola6mrsip.png",
+      "source_page": "https://wiki.biligame.com/wutheringwaves/人物网络",
+      "sha256": "a7e799217f85927e79c5e7fba277fa126886de7dd68e42deb057b046487315e1",
+      "bytes": 128979,
+      "size": [
+        256,
+        256
+      ]
+    },
+    "洛可可": {
+      "url": "https://patchwiki.biligame.com/images/wutheringwaves/4/4b/msl6thf7l9y7y4uye0re5f418pq037j.png",
+      "source_page": "https://wiki.biligame.com/wutheringwaves/人物网络",
+      "sha256": "01dd7fc8c14088df248ff0e99d50fa4158e5b4b86eaecb4456166c8bf9bbf047",
+      "bytes": 126788,
+      "size": [
+        256,
+        256
+      ]
+    },
+    "渊武": {
+      "url": "https://patchwiki.biligame.com/images/wutheringwaves/6/64/2jgt1jx2suo7ozq57n0ptq9shgklcn1.png",
+      "source_page": "https://wiki.biligame.com/wutheringwaves/人物网络",
+      "sha256": "8c4517228b3c5e6cc9120e783df3e9bb99f4441990011ee1bb2dc865173708ff",
+      "bytes": 257868,
+      "size": [
+        500,
+        500
+      ]
+    },
+    "灯灯": {
+      "url": "https://patchwiki.biligame.com/images/wutheringwaves/e/e3/r2odaab7jlluljannosblrx46wj6e44.png",
+      "source_page": "https://wiki.biligame.com/wutheringwaves/人物网络",
+      "sha256": "c5d0c90a263cbc39b9fff046b710a9b2bf89a4f5c6a3cabdad1c33124d8f718c",
+      "bytes": 142963,
+      "size": [
+        256,
+        256
+      ]
+    },
+    "炽霞": {
+      "url": "https://patchwiki.biligame.com/images/wutheringwaves/f/f2/bd1k70w3149ut2eix63mqalnwawqexv.png",
+      "source_page": "https://wiki.biligame.com/wutheringwaves/人物网络",
+      "sha256": "a1e95df5993622079d195a8a5e8bffe71360528391bd6eb134e54d1679f9b56e",
+      "bytes": 271365,
+      "size": [
+        500,
+        500
+      ]
+    },
+    "珂莱塔": {
+      "url": "https://patchwiki.biligame.com/images/wutheringwaves/3/35/eviv3ze1p76andjtwhzmdau1l3yvsnj.png",
+      "source_page": "https://wiki.biligame.com/wutheringwaves/人物网络",
+      "sha256": "6847b85cf18d04a8ca07a3c414aa1019a8d6918e866fa5608b746b481110e131",
+      "bytes": 130402,
+      "size": [
+        256,
+        256
+      ]
+    },
+    "男漂泊者": {
+      "url": "https://prod-alicdn-community.kurobbs.com/newHead/aki/man.png",
+      "source_page": "https://wiki.kurobbs.com/mc/item/1309607893299945472",
+      "sha256": "34cddc5312db9b4224c850f5eccc7444a8afc5f8fd6b614a08b6ea369221c938",
+      "bytes": 288112,
+      "size": [
+        500,
+        500
+      ]
+    },
+    "白芷": {
+      "url": "https://patchwiki.biligame.com/images/wutheringwaves/2/20/r9nna41k49bzhi16mnxb8t0ye6inxmk.png",
+      "source_page": "https://wiki.biligame.com/wutheringwaves/人物网络",
+      "sha256": "64eec0c095a57be909250ff9f064949ef3fcdd5c93b53fbe9e2da9240950b76d",
+      "bytes": 313274,
+      "size": [
+        500,
+        500
+      ]
+    },
+    "相里要": {
+      "url": "https://patchwiki.biligame.com/images/wutheringwaves/8/8f/oq8dqbwpkeusl2ez9i8q5bb9zxbtt58.png",
+      "source_page": "https://wiki.biligame.com/wutheringwaves/人物网络",
+      "sha256": "a06d6ea2a31a97aec89bb6e77dec91a226505d12a944a76d3b39ceeefc7ca7f5",
+      "bytes": 97792,
+      "size": [
+        256,
+        256
+      ]
+    },
+    "秋水": {
+      "url": "https://patchwiki.biligame.com/images/wutheringwaves/2/24/s90dzmxbgy85thffh28y2on8gdwu6fv.png",
+      "source_page": "https://wiki.biligame.com/wutheringwaves/人物网络",
+      "sha256": "1794f1d390d1787fc4424310998b32e6dfdca9c1f76df9a1aa803ece9a29bcba",
+      "bytes": 328827,
+      "size": [
+        500,
+        486
+      ]
+    },
+    "秧秧": {
+      "url": "https://patchwiki.biligame.com/images/wutheringwaves/1/16/cb1memfddvwa143bp4w2s14z6qa0m8o.png",
+      "source_page": "https://wiki.biligame.com/wutheringwaves/人物网络",
+      "sha256": "98fae0ae46220e4b91147cf8813a8e34003c3c0fe87614a538f5ad3e26abf780",
+      "bytes": 242529,
+      "size": [
+        500,
+        500
+      ]
+    },
+    "维里奈": {
+      "url": "https://patchwiki.biligame.com/images/wutheringwaves/4/4a/kr2061s7771vfylcbe4qwk371qrr3l0.png",
+      "source_page": "https://wiki.biligame.com/wutheringwaves/人物网络",
+      "sha256": "8cc87d007cb21d111b85f21669d2045ab42c691acdd842b3568da3ba83cef31c",
+      "bytes": 115681,
+      "size": [
+        256,
+        256
+      ]
+    },
+    "莫特斐": {
+      "url": "https://patchwiki.biligame.com/images/wutheringwaves/7/7a/izbqz4byz40tn7owhp39sdissmuomjg.png",
+      "source_page": "https://wiki.biligame.com/wutheringwaves/人物网络",
+      "sha256": "ff67c82368e4e1aa04c8d5f8e644fb021ea1e2bfa9fa7700636225a8a016d690",
+      "bytes": 330124,
+      "size": [
+        498,
+        500
+      ]
+    },
+    "菲比": {
+      "url": "https://patchwiki.biligame.com/images/wutheringwaves/2/2f/33jjtimctk1nrt4nn9cdu2eczql28df.png",
+      "source_page": "https://wiki.biligame.com/wutheringwaves/人物网络",
+      "sha256": "d1aaedb1a8837cea7d7b52533c3b038a1faf1e81e5e1282eceeedc2492b03a1a",
+      "bytes": 189472,
+      "size": [
+        328,
+        328
+      ]
+    },
+    "赞妮": {
+      "url": "https://patchwiki.biligame.com/images/wutheringwaves/9/9e/84bpe2n3x630qnsqpznw7bzqekqbisb.png",
+      "source_page": "https://wiki.biligame.com/wutheringwaves/人物网络",
+      "sha256": "879a6ce8a102e8163884b38ad13841ec0dae003081f4cb9f4112b9308c9d71ca",
+      "bytes": 125229,
+      "size": [
+        256,
+        256
+      ]
+    },
+    "釉瑚": {
+      "url": "https://patchwiki.biligame.com/images/wutheringwaves/1/16/n14haalov2zdctcfw1qh3y6c3t4fx6d.png",
+      "source_page": "https://wiki.biligame.com/wutheringwaves/人物网络",
+      "sha256": "832eeb4ac43bf1d7f3ba4b01136b7a7222cf37166d3b4fdf799f517844ece30b",
+      "bytes": 109127,
+      "size": [
+        256,
+        256
+      ]
+    },
+    "鉴心": {
+      "url": "https://patchwiki.biligame.com/images/wutheringwaves/e/ee/3k29vxlpq1fkll2vd3rt0ikzmbarp57.png",
+      "source_page": "https://wiki.biligame.com/wutheringwaves/人物网络",
+      "sha256": "6a46462b6644915f28bb632388677dea3207573983eb57423840e003a9673637",
+      "bytes": 291544,
+      "size": [
+        500,
+        500
+      ]
+    },
+    "长离": {
+      "url": "https://patchwiki.biligame.com/images/wutheringwaves/6/62/dp8vsim7fip3yph1ljnqld4prijyagb.png",
+      "source_page": "https://wiki.biligame.com/wutheringwaves/人物网络",
+      "sha256": "1e63b1052c7cbe9b52dbd548a44ae279a6c5a33231a4b4b90830c16f635e3471",
+      "bytes": 119695,
+      "size": [
+        256,
+        256
+      ]
+    }
+  }
+}

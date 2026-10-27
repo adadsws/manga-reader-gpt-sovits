@@ -2,7 +2,10 @@
 $taskRoot=Split-Path -Parent $PSScriptRoot
 Set-Location -LiteralPath $taskRoot
 $runtime=Get-Content -Raw -Encoding UTF8 config/runtime.json | ConvertFrom-Json
-$taskPython=$runtime.python
+$taskPython=[string]$runtime.python
+if ($taskPython -and ![IO.Path]::IsPathRooted($taskPython)) {
+ $taskPython=Join-Path $taskRoot $taskPython
+}
 $env:PYTHONUTF8='1'
 # 旧版叠加层曾安装 CPU-only ONNX Runtime，会遮蔽固定运行时自带的 GPU 版；可逆迁移出 PYTHONPATH。
 $taskOverlay=Join-Path $taskRoot '~temp/ocrdeps'

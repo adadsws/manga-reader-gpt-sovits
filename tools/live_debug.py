@@ -32,6 +32,11 @@ EVENTS = {
     'tts_chunk_end':'语音分段完成', 'tts_error':'语音合成失败或已取消',
     'model_load_start':'开始加载朗读模型', 'model_load_ready':'朗读模型加载完成',
     'model_load_error':'朗读模型加载失败',
+    'model_validation_batch_start':'开始逐项验证朗读模型',
+    'model_validation_item_ready':'一个朗读模型已试读可用',
+    'model_validation_item_failed':'一个朗读模型试读失败',
+    'model_validation_batch_complete':'朗读模型自动验证完成',
+    'model_validation_batch_failed':'朗读模型自动验证已停止',
     'audio_queued':'等待语音处理', 'audio_ready':'整页音频已返回', 'page_cancelled':'页面已取消/释放',
     'overlay_ready':'朗读浮窗已启动', 'overlay_closed':'朗读浮窗已关闭',
     'capture_start':'正在截屏', 'upload_start':'正在上传截图', 'ocr_received':'已收到识别结果',
@@ -46,6 +51,7 @@ EVENTS = {
 FIELDS = {'bytes':'字节', 'rows':'行数', 'chunks':'总段数', 'chunk':'当前段',
           'characters':'字数', 'seconds':'耗时秒', 'status':'HTTP', 'index':'播放单元',
           'android_version':'安卓版本', 'computer_version':'电脑版本',
+          'total':'待验证数', 'completed':'已验证数', 'failed':'失败数',
           'generation':'任务序号', 'auto':'自动翻页'}
 
 def format_event(data):
@@ -53,7 +59,7 @@ def format_event(data):
     if not isinstance(name,str) or name not in EVENTS: return None
     fields = [f'{label}={data[key]}' for key,label in FIELDS.items()
               if key in data and isinstance(data[key], (int,float,bool))]
-    if name in ('tts_error','model_load_error','warmup_error') and isinstance(data.get('reason'),str):
+    if name in ('tts_error','model_load_error','warmup_error','model_validation_item_failed','model_validation_batch_failed') and isinstance(data.get('reason'),str):
         fields.append('完整原因='+data['reason'])
     return EVENTS[name] + (' | ' + ' '.join(fields) if fields else '')
 
@@ -126,7 +132,20 @@ class AndroidStream:
         self.cursor=None;self.boundary=set()
     def connect(self):
         self.close()
-        args=[str(self.adb),'-s','emulator-5554']
+        serial=os.environ.get('READER_ADB_SERIAL')
+        if not serial:
+            devices=subprocess.run([str(self.adb),'devices'],capture_output=True,timeout=3)
+            if devices.returncode: raise OSError('ADB 设备列表不可读取')
+            for line in devices.stdout.decode('utf-8',errors='replace').splitlines():
+                match=re.fullmatch(r'(emulator-\d+)\s+device(?:\s+.*)?',line)
+                if not match: continue
+                candidate=match.group(1)
+                name=subprocess.run([str(self.adb),'-s',candidate,'emu','avd','name'],capture_output=True,timeout=3)
+                if name.stdout.splitlines() and name.stdout.splitlines()[0].strip()==b'ReaderAosp35':
+                    serial=candidate
+                    break
+        if not serial: raise OSError('专用模拟器未连接')
+        args=[str(self.adb),'-s',serial]
         avd=subprocess.run(args+['emu','avd','name'],capture_output=True,timeout=3)
         if not avd.stdout.splitlines() or avd.stdout.splitlines()[0].strip()!=b'ReaderAosp35':
             raise OSError('专用模拟器未连接')

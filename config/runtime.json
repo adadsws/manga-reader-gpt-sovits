@@ -1,5 +1,1 @@
-{
-  "python": "python",
-  "pretrained": "models/gpt-sovits/pretrained",
-  "java": "C:/Program Files/Java/jdk-21"
-}
+{"python":"~temp/runtime/gpt-sovits/python.exe","pretrained":"~temp/gpt-sovits/GPT_SoVITS/pretrained_models","java":"C:/Program Files/Java/jdk-21"}

@@ -14,8 +14,10 @@ def asr_status():
 
 def _load_model(device):
     from funasr import AutoModel
-    path=json.loads((ROOT/'config/asr-validation.lock.json').read_text(encoding='utf-8'))['model_path']
-    return AutoModel(model=path,device=device,disable_update=True,ncpu=4,disable_pbar=True)
+    path=Path(json.loads((ROOT/'config/asr-validation.lock.json').read_text(encoding='utf-8'))['model_path'])
+    if not path.is_absolute():
+        path=ROOT/path
+    return AutoModel(model=str(path),device=device,disable_update=True,ncpu=4,disable_pbar=True)
 
 def recovery_parts(text):
     """有省略号时优先保留其后的连续语句；否则按明确句末符号细分。"""

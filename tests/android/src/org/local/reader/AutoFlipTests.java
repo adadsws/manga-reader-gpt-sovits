@@ -275,8 +275,9 @@ public class AutoFlipTests extends Instrumentation {
         android.view.View addressRow=findDescription(activity.getWindow().getDecorView(),"设置项 电脑服务地址");
         check(title.getCurrentTextColor()==MainActivity.SECTION_HEADING_TEXT
             && title.getBackground()==null && addressRow!=null
-            && addressRow.getHeight()==MainActivity.SETTING_ROW_HEIGHT
-            && addressTitle!=null && activity.addressStatus.getHeight()==56
+            && addressTitle!=null
+            && addressRow.getHeight()>=activity.dp(MainActivity.SETTING_ROW_MIN_HEIGHT_DP)
+            && addressRow.getHeight()>=addressTitle.getHeight()+activity.addressStatus.getHeight()
             && aboutTitle!=null && projectUrl!=null && creator!=null
             && activity.address.getParent()==null
             && directSettingControls(activity.getWindow().getDecorView())==0,
@@ -292,11 +293,13 @@ public class AutoFlipTests extends Instrumentation {
             "pairing token is fully visible in both the row and editor");
         activity.activeDialog.getButton(android.app.AlertDialog.BUTTON_NEGATIVE).performClick();
       }); passed++;
-      MainActivity.ConnectionVersionState same=MainActivity.connectionVersionState("{\"version\":4}");
-      MainActivity.ConnectionVersionState different=MainActivity.connectionVersionState("{\"version\":3}");
+      MainActivity.ConnectionVersionState same=MainActivity.connectionVersionState("{\"version\":\"1.4\"}");
+      MainActivity.ConnectionVersionState different=MainActivity.connectionVersionState("{\"version\":\"1.3\"}");
+      MainActivity.ConnectionVersionState legacy=MainActivity.connectionVersionState("{\"version\":4}");
       MainActivity.ConnectionVersionState missing=MainActivity.connectionVersionState("{\"status\":\"ok\"}");
-      check(same.color==MainActivity.CONNECTED_TEXT && same.text.equals("电脑已连接 · 版本 4")
-          && different.color==MainActivity.WARNING_TEXT && different.text.contains("安卓 4，电脑 3")
+      check(same.color==MainActivity.CONNECTED_TEXT && same.text.equals("电脑已连接 · 版本 1.4")
+          && different.color==MainActivity.WARNING_TEXT && different.text.contains("安卓 1.4，电脑 1.3")
+          && legacy.color==MainActivity.WARNING_TEXT && legacy.text.contains("未报告有效版本")
           && missing.color==MainActivity.WARNING_TEXT && missing.text.contains("未报告有效版本"),
           "pair version states distinguish matching, different, and missing versions without disconnecting"); passed++;
       if (android.os.Build.VERSION.SDK_INT>=34) {

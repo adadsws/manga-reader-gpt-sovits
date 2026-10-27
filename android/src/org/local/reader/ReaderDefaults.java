@@ -2,10 +2,10 @@ package org.local.reader;
 
 // 用户确认的默认设置；设置页、后台服务和翻页服务必须共用同一份值。
 final class ReaderDefaults {
-  static final int READER_PROTOCOL_VERSION = 4;
+  static final String READER_PROTOCOL_VERSION = "1.4";
   static final String ADDRESS = "http://10.0.2.2:8765";
   static final String TOKEN = "reader-local";
-  static final String MODEL_LABEL = "日奈 · v4 · 日奈_e10_s160_l32";
+  static final String MODEL_LABEL = "菲比_ZH · v4 · 菲比_ZH_e10_s290_l32";
   static final int SENTENCE_GAP_MS = 100;
   static final int SPEECH_SPEED_PERCENT = 90;
   static final boolean AUTO_FLIP = true;
