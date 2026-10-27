@@ -27,7 +27,7 @@ When the computer service starts, it loads and trials complete models that have 
 |---|---|
 | <img src="docs/readme-assets/settings.png" alt="Connection and settings" width="360"> | <img src="docs/readme-assets/models.png" alt="Character selection" width="360"> |
 | Page turning settings | Floating control |
-| <img src="docs/readme-assets/advanced.png" alt="Page turning settings" width="360"> | <img src="docs/readme-assets/overlay.png" alt="Floating control over sample manga page 0012.jpg" width="360"><br><audio controls preload="metadata" src="docs/readme-assets/reading-preview.wav">Your viewer does not support embedded audio.</audio><br>[Download this page read by 菲比_ZH](docs/readme-assets/reading-preview.wav) |
+| <img src="docs/readme-assets/advanced.png" alt="Page turning settings" width="360"> | <img src="docs/readme-assets/overlay.png" alt="Floating control over sample manga page 0012.jpg" width="360"><br><audio controls preload="metadata" src="https://raw.githubusercontent.com/adadsws/manga-reader-gpt-sovits/main/docs/readme-assets/reading-preview.wav"></audio><br>[Listen to or download this page read by 菲比_ZH](https://raw.githubusercontent.com/adadsws/manga-reader-gpt-sovits/main/docs/readme-assets/reading-preview.wav) |
 
 ## First-time setup
 

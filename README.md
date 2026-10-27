@@ -27,7 +27,7 @@
 |---|---|
 | <img src="docs/readme-assets/settings.png" alt="连接与设置" width="360"> | <img src="docs/readme-assets/models.png" alt="选择角色" width="360"> |
 | 自动翻页设置 | 朗读浮窗 |
-| <img src="docs/readme-assets/advanced.png" alt="自动翻页设置" width="360"> | <img src="docs/readme-assets/overlay.png" alt="朗读浮窗，使用 0012.jpg 示例漫画" width="360"><br><audio controls preload="metadata" src="docs/readme-assets/reading-preview.wav">当前页面不支持直接播放音频。</audio><br>▶ [下载菲比_ZH朗读本页的音频](docs/readme-assets/reading-preview.wav) |
+| <img src="docs/readme-assets/advanced.png" alt="自动翻页设置" width="360"> | <img src="docs/readme-assets/overlay.png" alt="朗读浮窗，使用 0012.jpg 示例漫画" width="360"><br><audio controls preload="metadata" src="https://raw.githubusercontent.com/adadsws/manga-reader-gpt-sovits/main/docs/readme-assets/reading-preview.wav"></audio><br>▶ [试听或下载菲比_ZH朗读本页的音频](https://raw.githubusercontent.com/adadsws/manga-reader-gpt-sovits/main/docs/readme-assets/reading-preview.wav) |
 
 ## 第一次准备
 
