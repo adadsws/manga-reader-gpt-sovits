@@ -97,16 +97,27 @@ def checkbox(label, value):
         time.sleep(.4)
     if n is None:
         raise RuntimeError('没有找到设置控件：' + label)
-    old = n.get('checked') == 'true'
+    # 当前两行设置项用紧邻的状态文字显示值，点击后为单选弹窗。
+    listed = nodes()
+    position = next((i for i, item in enumerate(listed) if item.get('text') == label), None)
+    if position is None:
+        raise RuntimeError('设置项消失：' + label)
+    status = next((item.get('text') for item in listed[position + 1:position + 4]
+                   if (item.get('text') or '').startswith(('已开启', '已关闭', '向左翻', '向右翻'))), None)
+    if status is None:
+        raise RuntimeError('无法读取设置状态：' + label)
+    old = status.startswith('已开启') or status == '向左翻'
     if old != value:
         capture.tap(label)
+        capture.tap('开启' if value else '关闭')
+        capture.tap('保存')
     return old
 
 
 def open_advanced_options():
     # 高级项默认折叠；若目标控件尚未渲染，按稳定按钮文本展开一次。
     labels = {item.get('text') or '' for item in nodes()}
-    if '收起高级选项' in labels or '下一页向左翻（默认向右翻）' in labels:
+    if '下一页翻页方向' in labels:
         return
     capture.tap('高级选项')
     time.sleep(.5)
@@ -145,7 +156,8 @@ def check(source=None):
 def new(source=None):
     source, pages = check(source)
     if ACTIVE.exists():
-        old_out, old = session()
+        # 历史批次可能已整体归档；已恢复时只需读取状态，不依赖旧输出目录。
+        old = read(ACTIVE)
         if not old.get('restored'):
             raise RuntimeError('上一批次尚未恢复配置，请先运行 06_restore.bat。')
     stamp = datetime.now().strftime('%Y%m%d-%H%M%S-%f')
@@ -196,6 +208,9 @@ def setup(optimizations='keep'):
     print('1/5 正在打开漫画朗读设置…', flush=True)
     capture.adb('shell', 'am', 'start', '-n', 'org.local.reader/.MainActivity')
     time.sleep(1)
+    if any(n.get('content-desc') == '返回常用设置' for n in nodes()):
+        capture.tap('←')
+        time.sleep(.5)
     for _ in range(6):
         capture.adb('shell', 'input', 'swipe', 540, 520, 540, 1500, 250)
     time.sleep(.5)
@@ -204,28 +219,41 @@ def setup(optimizations='keep'):
         old = checkbox(label, desired)
         if not state.get('settings_saved'):
             state[key] = old
+            state['auto_recorded'] = True
+            save(ACTIVE, state)
+            save(out / 'session.json', state)
     open_advanced_options()
-    label, desired, key = ('下一页向左翻（默认向右翻）', read(out / 'flip-calibration.json')['left'], 'left_before')
+    label, desired, key = ('下一页翻页方向', read(out / 'flip-calibration.json')['left'], 'left_before')
     print('2/5 正在确认设置：' + label, flush=True)
     old = checkbox(label, desired)
     if not state.get('settings_saved'):
         state[key] = old
+        state['left_recorded'] = True
+        save(ACTIVE, state)
+        save(out / 'session.json', state)
     if optimizations != 'keep':
-        desired = optimizations == 'on'
-        for label, key in [('OCR 与分镜并行', 'parallel_vision_before'),
-                           ('首段语音提前生成', 'eager_first_audio_before'),
-                           ('按顺序预取本页全部语音', 'early_prefetch_before'),
-                           ('翻页后自适应抓帧', 'adaptive_capture_before')]:
+        features = [('OCR 与分镜并行', 'parallel_vision_before', 'parallel'),
+                    ('首段语音提前生成', 'eager_first_audio_before', 'eager'),
+                    ('按顺序预取本页全部语音', 'early_prefetch_before', 'prefetch'),
+                    ('翻页后自适应抓帧', 'adaptive_capture_before', 'adaptive'),
+                    ('匹配历史结果时跳过处理', 'history_reuse_before', 'history')]
+        for label, key, feature in features:
+            desired = optimizations == 'on' or optimizations == feature
             print('2/5 正在确认低等待设置：' + label, flush=True)
             old = checkbox(label, desired)
             if key not in state:
                 state[key] = old
+                save(ACTIVE, state)
+                save(out / 'session.json', state)
         state['optimization_mode'] = optimizations
     state['settings_saved'] = True
     save(ACTIVE, state)
     save(out / 'session.json', state)
     if b'org.local.reader' not in capture.adb('shell', 'settings', 'get', 'secure', 'enabled_accessibility_services'):
         raise RuntimeError('请在专用模拟器的系统无障碍设置中开启漫画朗读，然后重试。')
+    if any(n.get('content-desc') == '返回常用设置' for n in nodes()):
+        capture.tap('←')
+        time.sleep(.5)
     if projection_active():
         print('3/5 无障碍权限与现有整屏投屏均已确认。', flush=True)
     else:
@@ -453,15 +481,24 @@ def restore_android():
     capture.adb('shell', 'am', 'force-stop', 'org.local.reader')
     capture.adb('shell', 'am', 'start', '-n', 'org.local.reader/.MainActivity')
     time.sleep(1)
-    checkbox('读完一页后自动翻页', state['auto_before'])
-    open_advanced_options()
-    checkbox('下一页向左翻（默认向右翻）', state['left_before'])
+    if state.get('auto_recorded') or state.get('settings_saved'):
+        checkbox('读完一页后自动翻页', state['auto_before'])
+    if state.get('left_recorded') or state.get('settings_saved') or any(key in state for key in
+            ('parallel_vision_before', 'eager_first_audio_before', 'early_prefetch_before',
+             'adaptive_capture_before', 'history_reuse_before')):
+        open_advanced_options()
+    if state.get('left_recorded') or state.get('settings_saved'):
+        checkbox('下一页翻页方向', state['left_before'])
     for label, key in [('OCR 与分镜并行', 'parallel_vision_before'),
                        ('首段语音提前生成', 'eager_first_audio_before'),
                        ('按顺序预取本页全部语音', 'early_prefetch_before'),
-                       ('翻页后自适应抓帧', 'adaptive_capture_before')]:
+                       ('翻页后自适应抓帧', 'adaptive_capture_before'),
+                       ('匹配历史结果时跳过处理', 'history_reuse_before')]:
         if key in state:
             checkbox(label, state[key])
+    if any(n.get('content-desc') == '返回常用设置' for n in nodes()):
+        capture.tap('←')
+        time.sleep(.5)
     # checkbox() scrolls the settings page while locating controls.  The
     # connection status lives at the top and uiautomator only exposes the
     # currently rendered ScrollView children, so return to the top before
@@ -473,7 +510,7 @@ def restore_android():
     connected = False
     for _ in range(10):
         labels = {n.get('text') or '' for n in nodes()}
-        if any(label.endswith('电脑已连接') or label.endswith('电脑服务已连接') for label in labels):
+        if any(label.startswith('电脑已连接') or label.startswith('电脑服务已连接') for label in labels):
             connected = True
             break
         time.sleep(1)
@@ -498,7 +535,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('action', choices=['check', 'new', 'prepare', 'feedback-import', 'setup', 'collect', 'report', 'restore-files', 'restore-android', 'status', 'open', 'stop'])
     parser.add_argument('--source', help='新建批次使用的 JPG 目录；后续步骤从批次状态读取。')
-    parser.add_argument('--optimizations', choices=['keep', 'on', 'off'], default='keep', help='setup 时统一设置四个 Android 低等待开关。')
+    parser.add_argument('--optimizations', choices=['keep', 'on', 'off', 'parallel', 'eager', 'prefetch', 'adaptive', 'history'], default='keep', help='setup 时设置五项加速开关；单项值表示仅开启该项。')
     args = parser.parse_args()
     actions = {'check': check, 'new': new, 'prepare': prepare, 'feedback-import': import_feedback, 'setup': setup, 'collect': collect, 'report': report,
                'restore-files': restore_files, 'restore-android': restore_android}

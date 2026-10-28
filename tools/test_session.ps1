@@ -2,7 +2,7 @@
 param(
     [Parameter(Mandatory=$true)][string]$Action,
     [string]$Source='',
-    [ValidateSet('keep','on','off')][string]$Optimizations='keep'
+    [ValidateSet('keep','on','off','parallel','eager','prefetch','adaptive','history')][string]$Optimizations='keep'
 )
 $ErrorActionPreference='Stop'
 $taskRoot=Split-Path -Parent $PSScriptRoot
@@ -47,32 +47,15 @@ function Restart-Reader {
     }
 }
 function Start-ReaderEmulator {
-    $taskDevices=(& $taskAdb devices | Out-String)
-    if ($taskDevices -notmatch 'emulator-5554\s+device') {
-        if ($taskDevices -notmatch 'emulator-5554') {
-            $env:ANDROID_HOME=Join-Path $taskRoot '~temp/android-sdk'
-            $env:ANDROID_AVD_HOME=Join-Path $taskRoot '~temp/avd'
-            # 默认无窗口运行，系统控件由03通过无障碍结构操作；不显示漫画。
-            $null=Start-Process -FilePath "$env:ANDROID_HOME/emulator/emulator.exe" -ArgumentList @('-avd','ReaderAosp35','-no-snapshot','-no-boot-anim','-no-metrics','-gpu','host','-port','5554','-no-window','-no-audio') -WindowStyle Hidden -PassThru -RedirectStandardOutput "$taskRoot/~temp/logs/reproduction-emulator.out.log" -RedirectStandardError "$taskRoot/~temp/logs/reproduction-emulator.err.log"
-        }
-        $taskBooted=$false
-        for ($i=0;$i -lt 90;$i++) {
-            try {$taskBoot=(& $taskAdb -s emulator-5554 shell getprop sys.boot_completed 2>$null | Out-String).Trim()} catch {$taskBoot=''}
-            if ($taskBoot -eq '1') {$taskBooted=$true;break}
-            Start-Sleep -Seconds 2
-        }
-        if (!$taskBooted) {throw '模拟器尚未完成启动；稍后重试02，或检查模拟器启动日志。'}
-    }
-    $taskDevices=(& $taskAdb devices | Out-String)
-    if ($taskDevices -notmatch 'emulator-5554\s+device') {throw 'ReaderAosp35 在启动期间断开，请查看模拟器启动日志。'}
-    $taskName=((& $taskAdb -s emulator-5554 emu avd name | Select-Object -First 1 | Out-String).Trim())
-    if (!$taskName) {$taskName=((& $taskAdb -s emulator-5554 shell getprop ro.boot.qemu.avd_name | Out-String).Trim())}
-    if ($LASTEXITCODE -ne 0 -or $taskName -ne 'ReaderAosp35') {throw '5554端口不是可核验的ReaderAosp35，拒绝继续。'}
-    & $taskAdb -s emulator-5554 install -r "$taskRoot/reader.apk"
-    if ($LASTEXITCODE -ne 0) {throw '正式APK安装失败。'}
+    # 复用已验证的可见启动入口，由它按 AVD 名识别唯一设备并校正窗口。
+    $env:READER_NO_PAUSE='1'
+    & (Join-Path $taskRoot 'tools/start_emulator.ps1')
+    if ($LASTEXITCODE -ne 0) {throw '专用 ReaderAosp35 启动或 APK 安装失败。'}
+    $taskSerial=(& $taskPython -B -c 'from tools.test_android import find_reader_serial; print(find_reader_serial())' | Out-String).Trim()
+    if ($LASTEXITCODE -ne 0 -or !$taskSerial) {throw '无法唯一识别 ReaderAosp35。'}
     # 正式 APK 重装可能让系统清空已授权服务；仅在已核验的专用 AVD 中恢复本项目固定服务。
-    & $taskAdb -s emulator-5554 shell settings put secure enabled_accessibility_services org.local.reader/.TurnService
-    & $taskAdb -s emulator-5554 shell settings put secure accessibility_enabled 1
+    & $taskAdb -s $taskSerial shell settings put secure enabled_accessibility_services org.local.reader/.TurnService
+    & $taskAdb -s $taskSerial shell settings put secure accessibility_enabled 1
 }
 try {
     switch ($Action) {

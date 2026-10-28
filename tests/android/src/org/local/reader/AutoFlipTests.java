@@ -145,6 +145,16 @@ public class AutoFlipTests extends Instrumentation {
     boolean hadHistoryPromote = saved.contains("historyPromote"), originalHistoryPromote = saved.getBoolean("historyPromote", false);
     int outcome = -1;
     try {
+      check(ReaderDefaults.isEmulator()
+          && ReaderDefaults.EMULATOR_ADDRESS.equals(ReaderDefaults.defaultAddress())
+          && ReaderDefaults.EMULATOR_ADDRESS.equals(ReaderDefaults.defaultAddressForHardware("goldfish"))
+          && ReaderBuildDefaults.PHONE_ADDRESS.equals(ReaderDefaults.defaultAddressForHardware("qcom"))
+          && ReaderBuildDefaults.PHONE_ADDRESS.equals(ReaderDefaults.resolveSavedAddress("", "qcom"))
+          && ReaderBuildDefaults.PHONE_ADDRESS.equals(ReaderDefaults.resolveSavedAddress(ReaderDefaults.EMULATOR_ADDRESS, "qcom"))
+          && "http://192.168.0.5:8765".equals(ReaderDefaults.resolveSavedAddress("http://192.168.0.5:8765", "qcom"))
+          && ReaderBuildDefaults.PHONE_ADDRESS.endsWith(":" + ReaderDefaults.READER_PORT)
+          && !ReaderBuildDefaults.PHONE_ADDRESS.contains("10.0.2.2"),
+          "official emulator and physical phone have distinct default hosts but the same port"); passed++;
       check(TurnService.startX(true,100)<TurnService.endX(true,100) && TurnService.startX(false,100)>TurnService.endX(false,100),"page direction is opposite to finger gesture"); passed++;
       ComponentName turnComponent=new ComponentName("org.local.reader","org.local.reader.TurnService");
       check(TurnService.enabledServicesContain("example/.Other:org.local.reader/.TurnService",turnComponent)

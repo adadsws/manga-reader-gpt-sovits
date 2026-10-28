@@ -18,5 +18,10 @@
     "file": "PP-OCRv6_rec_small.onnx",
     "bytes": 21234383,
     "sha256": "6f327246b50388f3c176ae304bd95767ea6dc0c9ae92153ef8cbe210b3c14884"
+  },
+  {
+    "file": "PP-OCRv6_rec_medium.onnx",
+    "bytes": 76629984,
+    "sha256": "eef444829dbbe18d7fea59a3f6eb75647518d2b3a9568d27c92e42940204894b"
   }
 ]

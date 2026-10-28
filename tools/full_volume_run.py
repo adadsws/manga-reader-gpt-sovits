@@ -15,12 +15,17 @@ ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / '~outputs-intermediate/evidence/full-volume-20260920'
 RAW = ROOT / '~outputs-intermediate/pages'
 ADB = ROOT / '~temp/android-sdk/platform-tools/adb.exe'
+READER_SERIAL = None
 SOURCE = ROOT / 'secrets/manga/[不可不可 (関谷あさみ)] インスタントサッキュ 丨 魅魔的速食性愛 [中国翻訳] [無修正] [DL版]'
 ALBUM = '/sdcard/Pictures/ReaderVolume20260920'
 
 
 def adb(*args):
-    return subprocess.check_output([str(ADB), '-s', 'emulator-5554', *map(str, args)], timeout=45)
+    global READER_SERIAL
+    if READER_SERIAL is None:
+        from tools.test_android import find_reader_serial
+        READER_SERIAL = find_reader_serial()
+    return subprocess.check_output([str(ADB), '-s', READER_SERIAL, *map(str, args)], timeout=45)
 
 
 def avd_name():
@@ -227,7 +232,7 @@ def collect():
     tap('读')
     last_progress=time.time(); last_recovery=0; terminals=0; expected=items[0]['source']
     while time.time()-started<14400:
-        logall=adb('logcat','-d','-v','epoch','-s','Reader:I','*:S').decode('utf-8',errors='replace')
+        logall=adb('logcat','-d','-v','epoch','-s','Reader:I','ReaderDebug:I','ReaderTiming:I','*:S').decode('utf-8',errors='replace')
         lines=[]
         for line in logall.splitlines():
             try:

@@ -1,0 +1,6 @@
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+  <!-- Android 26+ 使用安全区内的彩色前景；主题图标使用同主题单色标记。 -->
+  <background android:drawable="@color/reader_icon_background"/>
+  <foreground android:drawable="@drawable/reader_icon_foreground"/>
+  <monochrome android:drawable="@drawable/ic_stat_reader"/>
+</adaptive-icon>

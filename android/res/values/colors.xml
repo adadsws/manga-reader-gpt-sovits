@@ -1,0 +1,4 @@
+<resources>
+  <!-- 自适应图标底色与绿色品牌源图保持一致。 -->
+  <color name="reader_icon_background">#22B573</color>
+</resources>

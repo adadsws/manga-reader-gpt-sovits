@@ -4,6 +4,11 @@ $ErrorActionPreference = 'Stop'
 $taskRoot = Split-Path -Parent $PSScriptRoot
 Set-Location -LiteralPath $taskRoot
 $runtime = Get-Content -Raw -Encoding UTF8 config/runtime.json | ConvertFrom-Json
+$taskReaderConfig = Get-Content -Raw -Encoding UTF8 config/reader.json | ConvertFrom-Json
+$taskReaderPort = [int]$taskReaderConfig.reader_port
+if ($taskReaderPort -lt 1 -or $taskReaderPort -gt 65535) {throw 'reader_port must be between 1 and 65535.'}
+$taskReaderHealthUrl = 'http://127.0.0.1:{0}/health' -f $taskReaderPort
+$taskReaderValidationUrl = 'http://127.0.0.1:{0}/models/validation/start' -f $taskReaderPort
 $taskPython = [string]$runtime.python
 if ($taskPython -and ![IO.Path]::IsPathRooted($taskPython)) {
  $taskPython = Join-Path $taskRoot $taskPython
@@ -50,7 +55,7 @@ function Assert-ReaderPortOwner($port) {
  }
 }
 Assert-ReaderPortOwner 9882
-Assert-ReaderPortOwner 8765
+Assert-ReaderPortOwner $taskReaderPort
 if (!(Test-ReaderEndpoint 'http://127.0.0.1:9882/openapi.json')) {
  & $taskPython -B tools/prepare_tts.py
  if ($LASTEXITCODE -ne 0) {throw 'GPT-SoVITS 运行视图准备失败'}
@@ -58,22 +63,21 @@ if (!(Test-ReaderEndpoint 'http://127.0.0.1:9882/openapi.json')) {
  $taskProcess=Start-Process -PassThru -FilePath $taskPython -ArgumentList @('-u','-B','api_v2.py','-a','127.0.0.1','-p','9882','-c',('"'+$taskRoot+'/config/tts.yaml"')) -WorkingDirectory ($taskRoot+'/~temp/gpt-sovits') -WindowStyle Hidden -RedirectStandardOutput ($taskLogs+'/tts.out.log') -RedirectStandardError ($taskLogs+'/tts.err.log')
  Record-ReaderProcess $taskProcess
 }
-if (!(Test-ReaderEndpoint 'http://127.0.0.1:8765/health')) {
+if (!(Test-ReaderEndpoint $taskReaderHealthUrl)) {
  $env:PYTHONPATH=$taskRoot+'/~temp/ocrdeps;'+$taskRoot
- $taskProcess=Start-Process -PassThru -FilePath $taskPython -ArgumentList @('-u','-B','-m','uvicorn','server.app:app','--host','0.0.0.0','--port','8765') -WorkingDirectory $taskRoot -WindowStyle Hidden -RedirectStandardOutput ($taskLogs+'/reader.out.log') -RedirectStandardError ($taskLogs+'/reader.err.log')
+ $taskProcess=Start-Process -PassThru -FilePath $taskPython -ArgumentList @('-u','-B','-m','uvicorn','server.app:app','--host','0.0.0.0','--port',[string]$taskReaderPort) -WorkingDirectory $taskRoot -WindowStyle Hidden -RedirectStandardOutput ($taskLogs+'/reader.out.log') -RedirectStandardError ($taskLogs+'/reader.err.log')
  Record-ReaderProcess $taskProcess
 }
-Show-ReaderPhoneConnectionHelp -ProjectRoot $taskRoot
-Write-Host '安卓模拟器电脑地址： http://10.0.2.2:8765'
+Show-ReaderPhoneConnectionHelp -ProjectRoot $taskRoot -Port $taskReaderPort
+Write-Host ('安卓模拟器电脑地址： http://10.0.2.2:{0}' -f $taskReaderPort)
 Write-Host '首次模型加载请稍等。'
 
 $taskReady=$false
 for ($attempt=0;$attempt -lt 30;$attempt++) {
- if ((Test-ReaderEndpoint 'http://127.0.0.1:8765/health') -and (Test-ReaderEndpoint 'http://127.0.0.1:9882/openapi.json')) {$taskReady=$true;break}
+ if ((Test-ReaderEndpoint $taskReaderHealthUrl) -and (Test-ReaderEndpoint 'http://127.0.0.1:9882/openapi.json')) {$taskReady=$true;break}
  Start-Sleep -Seconds 1
 }
 if (!$taskReady) {throw '服务未就绪，请查看 ~temp/logs 下的错误日志'}
-$taskReaderConfig = Get-Content -Raw -Encoding UTF8 config/reader.json | ConvertFrom-Json
 if ($taskReaderConfig.startup_warmup -ne $false) {
  Write-Host '正在预热 OCR、TTS 和 ASR；首次启动可能需要约一分钟。'
  & $taskPython -u -B (Join-Path $taskRoot 'tools/warmup.py')
@@ -81,7 +85,7 @@ if ($taskReaderConfig.startup_warmup -ne $false) {
 } else {
  Write-Host '启动预热已关闭；首次朗读将包含模型加载等待。'
 }
-$taskValidation=Invoke-RestMethod -Method Post -Uri 'http://127.0.0.1:8765/models/validation/start' -Headers @{'X-Reader-Token'=[string]$taskReaderConfig.token} -TimeoutSec 15
+$taskValidation=Invoke-RestMethod -Method Post -Uri $taskReaderValidationUrl -Headers @{'X-Reader-Token'=[string]$taskReaderConfig.token} -TimeoutSec 15
 Write-Host '电脑已开始后台逐项验证未验证或上次失败的朗读模型；手机模型目录会显示进度。'
 if ($Follow) {
     $taskRuntime=Get-Content -Raw -Encoding UTF8 -LiteralPath (Join-Path $taskRoot 'config/runtime.json') | ConvertFrom-Json

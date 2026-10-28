@@ -74,7 +74,7 @@ public class ReaderService extends Service {
         new Notification.Builder(this, "reader")
             .setContentTitle("漫画朗读已启动")
             .setContentText("截图和播放服务运行中，可在应用内停止")
-            .setSmallIcon(android.R.drawable.ic_media_play)
+            .setSmallIcon(R.drawable.ic_stat_reader)
             .setOngoing(true)
             .build();
     if (Build.VERSION.SDK_INT >= 29)
@@ -86,7 +86,7 @@ public class ReaderService extends Service {
     else startForeground(1, n);
     SharedPreferences p = getSharedPreferences("reader", 0);
     preferences = p;
-    base = p.getString("address", ReaderDefaults.ADDRESS);
+    base = ReaderDefaults.savedAddress(p);
     token = p.getString("token", ReaderDefaults.TOKEN);
     autoFlip = p.getBoolean("auto", ReaderDefaults.AUTO_FLIP);
     left = p.getBoolean("left", ReaderDefaults.NEXT_PAGE_LEFT);
@@ -702,6 +702,7 @@ public class ReaderService extends Service {
           p -> {
             if (g != generation) return;
             long completedAt = SystemClock.elapsedRealtime();
+            logPlaybackBoundary("end", completedAt);
             long remainingGap = remainingGapAfterPlayback(
                 expectedPlaybackEndAt, completedAt, sentenceGapMs());
             expectedPlaybackEndAt = 0;
@@ -734,9 +735,17 @@ public class ReaderService extends Service {
 
   void startPlayback(MediaPlayer activePlayer) {
     activePlayer.start();
+    logPlaybackBoundary("start", SystemClock.elapsedRealtime());
     int remaining = Math.max(0, activePlayer.getDuration() - activePlayer.getCurrentPosition());
     expectedPlaybackEndAt = remaining > 0 ? SystemClock.elapsedRealtime() + remaining : 0;
     debug("play_start");
+  }
+
+  // 仅记录播放器边界与单调时钟；不写入朗读正文，供真实链路逐单元计时。
+  void logPlaybackBoundary(String event, long elapsedMs) {
+    Log.i("ReaderTiming", "event=" + event + " page=" + pageId + " index=" + index
+        + " generation=" + generation + " elapsed_ms=" + elapsedMs
+        + " minimum_gap_ms=" + sentenceGapMs());
   }
 
   void beginSentenceGap(int g) {

@@ -1,5 +1,6 @@
 {
   "token": "reader-local",
+  "reader_port": 8765,
   "tts_url": "http://127.0.0.1:9882",
   "reference_audio": "models/gpt-sovits/鸣潮-中文/v4/菲比_ZH/【默认】在此之前，请您务必继续享受旅居拉古那的时光。.wav",
   "reference_text": "在此之前，请您务必继续享受旅居拉古那的时光。",

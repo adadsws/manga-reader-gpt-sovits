@@ -10,8 +10,9 @@ from pathlib import Path
 import cv2
 import numpy as np
 from rapidocr import RapidOCR
+from rapidocr.utils.typings import ModelType
 from opencc import OpenCC
-from .core import group_lines, split_sentences, map_text_to_panels, filter_speech_candidates, compact_reading_order, intersection_area, box_area
+from .core import group_lines, split_sentences, map_text_to_panels, filter_speech_candidates, compact_reading_order, partition_reading_order, intersection_area, box_area
 from .layout import MangaLayout
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -50,8 +51,11 @@ class MangaOCR:
             raise ValueError("ocr_device 只能是 cuda、cpu 或 auto")
         self.requested_device = requested
         use_cuda = requested != "cpu"
+        medium_model = ROOT / "~temp/ocrdeps/rapidocr/models/PP-OCRv6_rec_medium.onnx"
         self.engine = RapidOCR(
-            params={"EngineConfig.onnxruntime.use_cuda": use_cuda}
+            params={"EngineConfig.onnxruntime.use_cuda": use_cuda,
+                    "Rec.model_type": ModelType.MEDIUM,
+                    "Rec.model_path": str(medium_model)}
         )
         self.ocr_providers = self._providers(self.engine)
         cuda_ready = bool(self.ocr_providers) and all(
@@ -186,24 +190,24 @@ class MangaOCR:
         )
         # 板块模式先恢复连续文字列；检测区域碎片不能打断一个短语。
         groups = group_lines(rows, panels=panels)
+        def distance_fallback(part):
+            order = compact_reading_order(part)
+            if order is not None:
+                return [part[i] for i in order]
+            return [region.data for region in sort._simple_sort([Region(g) for g in part], True)]
+
         if panels:
             mapping = map_text_to_panels([g["box"] for g in groups], panels)
             grouped = {}
             for g, panel in zip(groups, mapping):
                 g["panel_id"] = panel
                 g["panel_box"] = panels[panel]
-                grouped.setdefault(panel, []).append(Region(g))
+                grouped.setdefault(panel, []).append(g)
             groups = []
             for panel in sorted(grouped):
-                regions = grouped[panel]
-                order = compact_reading_order([r.data for r in regions])
-                ordered = [regions[i] for i in order] if order is not None else sort._simple_sort(regions, True)
-                groups.extend(r.data for r in ordered)
+                groups.extend(partition_reading_order(grouped[panel], distance_fallback))
         else:
-            regions = sort.sort_regions(
-                [Region(g) for g in groups], right_to_left=True, img=frame
-            )
-            groups = [r.data for r in regions]
+            groups = partition_reading_order(groups, distance_fallback)
         # 每个排序后的完整文字区域就是一个朗读单元；不按标点再拆分。
         sentences = [
             {

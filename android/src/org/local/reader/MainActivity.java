@@ -262,7 +262,7 @@ public class MainActivity extends Activity {
     LinearLayout connection = section(l, "电脑连接与模型");
     address = new EditText(this);
     address.setSingleLine();
-    address.setText(prefs.getString("address", ReaderDefaults.ADDRESS));
+    address.setText(ReaderDefaults.savedAddress(prefs));
     token = new EditText(this);
     token.setSingleLine();
     token.setText(prefs.getString("token", ReaderDefaults.TOKEN));
@@ -308,7 +308,7 @@ public class MainActivity extends Activity {
         status(
             addressStatus,
             address.getText().toString().trim().replaceAll("/$", ""),
-            !ReaderDefaults.ADDRESS.equals(address.getText().toString().trim().replaceAll("/$", "")));
+            !ReaderDefaults.defaultAddress().equals(address.getText().toString().trim().replaceAll("/$", "")));
         status(tokenStatus, token.getText().toString(), !ReaderDefaults.TOKEN.contentEquals(token.getText()));
         restartConnectionMonitor(350);
       }

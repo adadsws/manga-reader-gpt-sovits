@@ -77,7 +77,7 @@ function Get-ReaderLanIPv4Addresses {
 function Show-ReaderPhoneConnectionHelp {
     param(
         [Parameter(Mandatory = $true)][string]$ProjectRoot,
-        [int]$Port = 8765
+        [Parameter(Mandatory = $true)][ValidateRange(1, 65535)][int]$Port
     )
     $taskAllAddresses = @(Get-ReaderLanIPv4Addresses)
     $taskAddresses = @($taskAllAddresses | Where-Object { !$_.IsVirtual })

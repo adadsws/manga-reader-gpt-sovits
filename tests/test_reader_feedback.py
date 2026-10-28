@@ -19,6 +19,8 @@ class ReadingFeedbackTests(unittest.TestCase):
         with patch("server.ocr.RapidOCR", return_value=Engine()) as rapid, patch("server.ocr.MangaLayout", return_value=Layout()) as layout:
             instance = MangaOCR("cuda")
         self.assertTrue(rapid.call_args_list[0].kwargs["params"]["EngineConfig.onnxruntime.use_cuda"])
+        self.assertEqual(rapid.call_args_list[0].kwargs["params"]["Rec.model_type"].value, "medium")
+        self.assertTrue(rapid.call_args_list[0].kwargs["params"]["Rec.model_path"].endswith("PP-OCRv6_rec_medium.onnx"))
         self.assertFalse(rapid.call_args_list[1].kwargs["params"]["EngineConfig.onnxruntime.use_cuda"])
         self.assertEqual(instance.ocr_backend, "cuda")
         self.assertEqual(rapid.call_count, 2)

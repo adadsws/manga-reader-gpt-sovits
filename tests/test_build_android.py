@@ -29,3 +29,13 @@ class AndroidBuildPathTests(unittest.TestCase):
             encoding="utf-8",
         )
         self.assertIn("--fixture", result.stdout)
+
+    def test_pc_and_android_reader_default_ports_match(self):
+        self.assertEqual(build_android.verify_reader_port(), 8765)
+
+    def test_port_mismatch_blocks_a_published_apk(self):
+        android_defaults = "static final int READER_PORT = 8765;"
+        with self.assertRaisesRegex(ValueError, "Reader port mismatch"):
+            build_android.validate_reader_port({"reader_port": 8766}, android_defaults)
+        with self.assertRaisesRegex(ValueError, "integer from 1 to 65535"):
+            build_android.validate_reader_port({"reader_port": 0}, android_defaults)

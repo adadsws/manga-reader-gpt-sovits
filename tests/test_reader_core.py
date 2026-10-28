@@ -6,10 +6,22 @@ from server.core import (
     PageStore,
     merge_page,
     normalize_speech_text,
+    partition_reading_order,
 )
 
 
 class ReaderCoreTests(unittest.TestCase):
+    def test_partition_order_reads_top_then_right_within_each_zone(self):
+        groups = [
+            {"name": "左上", "box": [10, 10, 30, 30]},
+            {"name": "右上", "box": [70, 10, 90, 30]},
+            {"name": "左下", "box": [10, 70, 30, 90]},
+            {"name": "右下", "box": [70, 70, 90, 90]},
+        ]
+        ordered = partition_reading_order(groups, lambda pair: sorted(pair, key=lambda g: -g["box"][0]))
+        self.assertEqual([g["name"] for g in ordered], ["右上", "左上", "右下", "左下"])
+        self.assertEqual([g["name"] for g in groups], ["左上", "右上", "左下", "右下"])
+
     def test_page_merge_preserves_reading_order_and_review_rows(self):
         rows = [
             {"text": "右边？", "confidence": 0.9},

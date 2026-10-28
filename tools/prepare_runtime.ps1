@@ -21,6 +21,8 @@ if ($taskLegacyOrt) {
 if ($LASTEXITCODE -ne 0) {throw 'OCR 依赖安装失败'}
 & $taskPython -B -m pip install --target '~temp/ocrdeps' --no-deps 'torchvision==0.23.0+cu128' --index-url https://download.pytorch.org/whl/cu128
 if ($LASTEXITCODE -ne 0) {throw 'torchvision 安装失败'}
+& $taskPython -B tools/prepare_ocr_models.py
+if ($LASTEXITCODE -ne 0) {throw 'OCR 整页识别模型准备失败'}
 & $taskPython -B tools/prepare_layout.py
 if ($LASTEXITCODE -ne 0) {throw '布局模型准备失败'}
 & $taskPython -B tools/prepare_tts.py

@@ -6,6 +6,9 @@ import zipfile
 import os
 import json
 import shutil
+import re
+import base64
+import ipaddress
 from datetime import datetime
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -30,6 +33,66 @@ def output_path(name):
     return PUBLISHED_APK if name == "reader" else GENERATED_APK_DIR / (name + ".apk")
 
 
+def validate_reader_port(config, java_source):
+    port = config.get("reader_port")
+    if type(port) is not int or not 1 <= port <= 65535:
+        raise ValueError("config/reader.json reader_port must be an integer from 1 to 65535")
+    match = re.search(r"\bREADER_PORT\s*=\s*(\d+)\s*;", java_source)
+    if not match:
+        raise ValueError("Android ReaderDefaults.READER_PORT is missing")
+    if int(match.group(1)) != port:
+        raise ValueError(f"Reader port mismatch: PC {port}, Android {match.group(1)}")
+    return port
+
+
+def verify_reader_port():
+    config = json.loads((ROOT / "config/reader.json").read_text(encoding="utf-8"))
+    java_source = (ROOT / "android/src/org/local/reader/ReaderDefaults.java").read_text(
+        encoding="utf-8"
+    )
+    return validate_reader_port(config, java_source)
+
+
+def phone_lan_host():
+    """Use the same ranked LAN adapters as the desktop phone connection hint."""
+    helper = str(ROOT / "tools/network_info.ps1").replace("'", "''")
+    command = (
+        f"$ProgressPreference='SilentlyContinue'; . '{helper}'; "
+        "Get-ReaderLanIPv4Addresses | "
+        "Where-Object { !$_.IsVirtual -and $_.IsPrivate } | "
+        "Select-Object -First 1 -ExpandProperty Address"
+    )
+    encoded = base64.b64encode(command.encode("utf-16-le")).decode("ascii")
+    result = subprocess.check_output(
+        ["powershell.exe", "-NoProfile", "-ExecutionPolicy", "Bypass", "-EncodedCommand", encoded],
+        text=True,
+        timeout=30,
+    ).strip()
+    try:
+        address = ipaddress.IPv4Address(result)
+    except ipaddress.AddressValueError as exc:
+        raise RuntimeError("No usable private LAN IPv4 for phone APK default address") from exc
+    if not address.is_private or address.is_loopback or address.is_link_local:
+        raise RuntimeError(f"Invalid phone APK default address: {address}")
+    return str(address)
+
+
+def write_phone_build_defaults(gen):
+    port = verify_reader_port()
+    host = phone_lan_host()
+    source = gen / "org/local/reader/ReaderBuildDefaults.java"
+    source.parent.mkdir(parents=True, exist_ok=True)
+    source.write_text(
+        "package org.local.reader;\n"
+        "// Built for the computer's current LAN address; the emulator uses 10.0.2.2.\n"
+        "final class ReaderBuildDefaults {\n"
+        f'  static final String PHONE_ADDRESS = "http://{host}:{port}";\n'
+        "}\n",
+        encoding="utf-8",
+    )
+    print(f"Phone APK default address: http://{host}:{port}")
+
+
 def build(folder, name, assets=None, classpath=None, asset_names=None):
     src = ROOT / folder
     # 每次使用新目录，避免已归档 Java 类残留在旧 classes 中重新打包。
@@ -37,6 +100,8 @@ def build(folder, name, assets=None, classpath=None, asset_names=None):
     work.mkdir(parents=True, exist_ok=True)
     gen = work / "gen"
     gen.mkdir(exist_ok=True)
+    if folder == "android":
+        write_phone_build_defaults(gen)
     classes = work / "classes"
     classes.mkdir(exist_ok=True)
     dex = work / "dex"

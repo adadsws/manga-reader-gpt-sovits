@@ -3,7 +3,27 @@ package org.local.reader;
 // 用户确认的默认设置；设置页、后台服务和翻页服务必须共用同一份值。
 final class ReaderDefaults {
   static final String READER_PROTOCOL_VERSION = "1.4";
-  static final String ADDRESS = "http://10.0.2.2:8765";
+  static final int READER_PORT = 8765;
+  static final String EMULATOR_ADDRESS = "http://10.0.2.2:" + READER_PORT;
+  static boolean isEmulatorHardware(String hardware) {
+    return "ranchu".equals(hardware) || "goldfish".equals(hardware);
+  }
+  static boolean isEmulator() { return isEmulatorHardware(android.os.Build.HARDWARE); }
+  static String defaultAddressForHardware(String hardware) {
+    return isEmulatorHardware(hardware) ? EMULATOR_ADDRESS : ReaderBuildDefaults.PHONE_ADDRESS;
+  }
+  static String defaultAddress() {
+    return defaultAddressForHardware(android.os.Build.HARDWARE);
+  }
+  static String resolveSavedAddress(String saved, String hardware) {
+    if (saved == null || saved.isEmpty()
+        || (!isEmulatorHardware(hardware) && EMULATOR_ADDRESS.equals(saved)))
+      return defaultAddressForHardware(hardware);
+    return saved;
+  }
+  static String savedAddress(android.content.SharedPreferences prefs) {
+    return resolveSavedAddress(prefs.getString("address", ""), android.os.Build.HARDWARE);
+  }
   static final String TOKEN = "reader-local";
   static final String MODEL_LABEL = "菲比_ZH · v4 · 菲比_ZH_e10_s290_l32";
   static final int SENTENCE_GAP_MS = 100;

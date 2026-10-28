@@ -164,6 +164,37 @@ def compact_reading_order(groups):
     return sorted(range(len(groups)), key=lambda i: ((right-boxes[i][2])**2 + (boxes[i][1]-top)**2, i))
 
 
+def partition_reading_order(groups, fallback):
+    """按文字框间的完整空白递归分区；横向先上后下，纵向先右后左。
+
+    与固定样本的 Magi v2＋分区排序使用同一规则。无法完整切分及仅两框时
+    调用原有距离排序；上游分镜检测与文字分组不在此处改变。
+    """
+    if len(groups) < 2:
+        return list(groups)
+    if len(groups) == 2:
+        return fallback(groups)
+    boxes = [group["box"] for group in groups]
+    typical = statistics.median(min(b[2] - b[0], b[3] - b[1]) for b in boxes)
+    candidates = []
+    for axis in (0, 1):
+        edges = sorted({b[axis] for b in boxes} | {b[axis + 2] for b in boxes})
+        for lo, hi in zip(edges, edges[1:]):
+            if hi - lo < typical * 0.8:
+                continue
+            pivot = (lo + hi) / 2
+            first = [g for g in groups if g["box"][axis + 2] <= pivot]
+            second = [g for g in groups if g["box"][axis] >= pivot]
+            if first and second and len(first) + len(second) == len(groups):
+                candidates.append((axis, (hi - lo) / max(typical, 1), first, second))
+    if not candidates:
+        return fallback(groups)
+    axis, _, first, second = max(candidates, key=lambda c: (c[1], c[0]))
+    before = partition_reading_order(first, fallback)
+    after = partition_reading_order(second, fallback)
+    return before + after if axis == 1 else after + before
+
+
 def split_sentences(text):
     return [
         s.strip()

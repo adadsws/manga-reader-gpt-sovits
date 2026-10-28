@@ -2,6 +2,8 @@
 
 [简体中文](README.md) · [English](README_EN.md)
 
+<img src="docs/readme-assets/reader-icon.svg" alt="Manga Reader app icon" width="96">
+
 Open a manga on Android and tap the floating control to read its text in panel order. Reader can turn the page when playback finishes. You can select a compatible GPT-SoVITS voice model and adjust speech speed and pauses.
 
 ## How it works
@@ -13,8 +15,8 @@ Models and the main processing run on the computer. Screenshots and audio travel
 
 ## Models
 
-- RapidOCR (PP-OCRv6) recognizes text.
-- Magi v2 detects panels and text regions.
+- RapidOCR (PP-OCRv6) uses small detection and medium recognition models for whole-page text. Remaining mistakes can be corrected in the text editor.
+- Magi v2 detects panels and text regions. Text is assigned to panels, then ordered by recursive whitespace partitions within each panel.
 - GPT-SoVITS uses Wuthering Waves `菲比_ZH` by default. You can select another compatible voice in the Android app. A model needs GPT `.ckpt`, SoVITS `.pth`, and reference audio, and is marked available only after it loads and passes a reference audio trial.
 
 When the computer service starts, it loads and trials complete models that have not yet been verified, reusing previous successful results. The Android model list keeps each folder's actual status, shows verification progress, and refreshes when the batch finishes. A failed trial shows the model's error.
@@ -64,6 +66,8 @@ Double-clicking [仅启动安卓模拟器.bat](仅启动安卓模拟器.bat) sto
 4. Enter the connection address and pairing token shown on the computer into the Android app, and wait for the connection status.
 
 Physical device support is still being refined. If something fails, first try the emulator to confirm that the computer service works.
+
+The computer Reader service and Android app both default to port `8765`. An APK built on this computer uses its LAN IP at build time (for example, `192.168.3.209`) as the physical phone default; the official emulator automatically uses `10.0.2.2:8765`. If the computer changes networks or IP, enter the new address shown by the desktop launcher in Android's computer address setting, or rebuild the APK on the current network. The internal speech service on `9882` is not the Android connection address.
 
 ## Start reading
 
