@@ -23,13 +23,15 @@ def recovery_parts(text):
     """有省略号时优先保留其后的连续语句；否则按明确句末符号细分。"""
     pattern = r'.+?(?:\.{3}|$)' if '...' in text else r'.+?(?:[。！？!?；;]+|$)'
     parts = re.findall(pattern, text, flags=re.S)
-    # 省略号后的句末符号不能成为独立 TTS 请求；并回上一段且保持原文无损。
-    merged=[]
+    # 无文字的标点段并入相邻朗读段；前置标点并入后段，保持原文无损。
+    merged=[];leading=''
     for part in parts:
-        if merged and not re.search(r'[\u3400-\u9fffA-Za-z0-9]',part):
-            merged[-1]+=part
+        if not re.search(r'[\u3400-\u9fff0-9０-９]',part):
+            if merged:merged[-1]+=part
+            else:leading+=part
         else:
-            merged.append(part)
+            merged.append(leading+part);leading=''
+    if leading and merged:merged[-1]+=leading
     parts=merged
     return parts if len(parts) > 1 and ''.join(parts) == text else [text]
 

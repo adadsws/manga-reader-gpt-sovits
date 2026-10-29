@@ -225,7 +225,7 @@ if __name__ == "__main__":
     build("android", "reader")
     if options.fixture:
         build(
-            "android-fixture",
+            "android/fixture",
             "reader-fixture",
             "secrets/manga",
             asset_names=("0009.jpg", "0012.jpg", "0041.jpg"),

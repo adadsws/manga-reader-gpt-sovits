@@ -54,15 +54,15 @@ python tools/prepare_avd.py
 python tools/build_android.py
 ```
 
-Afterward, double-click [启动电脑服务和安卓模拟器.bat](启动电脑服务和安卓模拟器.bat) and wait for the app to show that the computer is connected with protocol version 1.4. You can drag manga images into the emulator. The launcher moves the emulator window into the current display's usable area and scales it down proportionally when necessary.
+Afterward, double-click [启动电脑服务和安卓模拟器.bat](tools/launchers/启动电脑服务和安卓模拟器.bat) and wait for the app to show that the computer is connected with protocol version 1.4. You can drag manga images into the emulator. The launcher moves the emulator window into the current display's usable area and scales it down proportionally when necessary.
 
-Double-clicking [仅启动安卓模拟器.bat](仅启动安卓模拟器.bat) stops only a computer service that this project's launcher can identify as its own. The Android app should then show that the computer is disconnected.
+Double-clicking [仅启动安卓模拟器.bat](tools/launchers/仅启动安卓模拟器.bat) stops only a computer service that this project's launcher can identify as its own. The Android app should then show that the computer is disconnected.
 
 ## Option 2: Physical Android device
 
 1. Connect the computer and phone to the same Wi-Fi network. Avoid guest networks.
 2. Send [reader.apk](reader.apk) to the phone and install it. Use this same file for updates.
-3. Double-click [仅启动电脑服务.bat](仅启动电脑服务.bat).
+3. Double-click [仅启动电脑服务.bat](tools/launchers/仅启动电脑服务.bat).
 4. Enter the connection address and pairing token shown on the computer into the Android app, and wait for the connection status.
 
 Physical device support is still being refined. If something fails, first try the emulator to confirm that the computer service works.
@@ -91,6 +91,6 @@ The advanced history option uses the latest non-hidden result for an exact match
 - Yellow version warning: the Android and computer protocol versions differ, but reading can continue. Update the older side when convenient. Older Android clients that do not report a version also produce a warning.
 - Incorrect or missing text: enlarge the manga and restart reading. Unusual fonts, very small text, and complex panels can still cause recognition errors.
 - Speech fails: tap `查看完整错误` on the floating control and check the computer window.
-- Stop the computer service: run `仅启动电脑服务.bat stop` from the project directory.
+- Stop the computer service: run `tools/launchers/仅启动电脑服务.bat stop` from the project directory.
 
 [Change log](CHANGELOG.md)

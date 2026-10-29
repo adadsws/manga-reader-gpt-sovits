@@ -8,7 +8,7 @@ import time
 import urllib.request
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 PAGES = [ROOT / "secrets/manga/0009.jpg", ROOT / "secrets/manga/0012.jpg", ROOT / "secrets/manga/0041.jpg"]
 CFG = json.loads((ROOT / "config/reader.json").read_text(encoding="utf-8"))
 BASE = "http://127.0.0.1:8765"

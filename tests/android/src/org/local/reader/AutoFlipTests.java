@@ -222,6 +222,10 @@ public class AutoFlipTests extends Instrumentation {
         service.stableHash=new int[]{10,20};
         service.captureStarted=android.os.SystemClock.elapsedRealtime()-ReaderService.AUTO_FLIP_CHANGE_TIMEOUT_MS;
         check(service.unchangedPageTimedOut(),"unchanged deadline does not depend on another frame callback");
+        service.stableHash=new int[]{14,24};
+        check(service.unchangedPageTimedOut(),"minor local redraw still stops a repeated page");
+        service.stableHash=new int[]{20,30};
+        check(!service.unchangedPageTimedOut(),"a distinct page remains eligible for capture");
         service.adaptiveCapture=false;
         check(!service.unchangedPageTimedOut(),"legacy capture does not use adaptive unchanged deadline");
       }); passed++;

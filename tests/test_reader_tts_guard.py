@@ -69,6 +69,18 @@ class GuardTests(unittest.TestCase):
         self.assertEqual(recovery_parts('先走！再回来？'), ['先走！', '再回来？'])
         self.assertEqual(recovery_parts('这是完整的句子'), ['这是完整的句子'])
         self.assertEqual(recovery_parts('第一段...第二段...！'), ['第一段...', '第二段...！'])
+        self.assertEqual(recovery_parts('...嗯？'), ['...嗯？'])
+        self.assertEqual(recovery_parts('...嗯？然后呢。'), ['...嗯？然后呢。'])
+        self.assertEqual(recovery_parts('...？！嗯？'), ['...？！嗯？'])
+        self.assertEqual(recovery_parts('？！嗯？'), ['？！嗯？'])
+
+    def test_leading_punctuation_never_becomes_a_tts_request(self):
+        calls=[]
+        text='...嗯？'
+        with patch('server.tts_guard.recognize',side_effect=['', '嗯']):
+            _,audit=guarded_synthesize(text,lambda part,seed:calls.append((part,seed)) or wav(1))
+        self.assertEqual(calls,[(text,42),(text,0)])
+        self.assertTrue(audit['verified'])
 
     def test_recovery_retains_only_accepted_audio(self):
         calls=[]

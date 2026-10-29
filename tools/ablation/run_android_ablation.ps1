@@ -5,7 +5,7 @@ param(
     [string]$Output='~outputs-intermediate/evidence/android-ablation/full-20261028'
 )
 $ErrorActionPreference='Stop'
-$taskRoot=Split-Path -Parent $PSScriptRoot
+$taskRoot=Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 Set-Location -LiteralPath $taskRoot
 $taskOutput=[IO.Path]::GetFullPath($Output)
 $taskEvidence=[IO.Path]::GetFullPath((Join-Path $taskRoot '~outputs-intermediate/evidence'))
@@ -21,11 +21,11 @@ $taskSources=@($Book1,$Book2)
 for ($taskIndex=0;$taskIndex -lt $taskSources.Count;$taskIndex++) {
     $taskMatrix=Join-Path $taskOutput ("book$($taskIndex+1).json")
     $taskMatrices+=$taskMatrix
-    & (Join-Path $taskRoot 'tools/compare_android_pipeline.ps1') -Source $taskSources[$taskIndex] -Output $taskMatrix
+    & (Join-Path $PSScriptRoot 'compare_android_pipeline.ps1') -Source $taskSources[$taskIndex] -Output $taskMatrix
     if ($LASTEXITCODE -ne 0) {throw "第 $($taskIndex+1) 部样本消融未完成；查看 $taskMatrix 与当前批次状态。"}
 }
 $taskRuntime=Get-Content -Raw -Encoding UTF8 -LiteralPath 'config/runtime.json' | ConvertFrom-Json
 $taskPython=$taskRuntime.python
-& $taskPython -B .\tools\summarize_android_ablation.py @taskMatrices --output (Join-Path $taskOutput 'summary.json')
+& $taskPython -B .\tools\ablation\summarize_android_ablation.py @taskMatrices --output (Join-Path $taskOutput 'summary.json')
 if ($LASTEXITCODE -ne 0) {throw '两部样本已运行，但汇总失败；原始矩阵仍保留。'}
 Write-Host "消融汇总：$(Join-Path $taskOutput 'summary.json')"

@@ -190,7 +190,7 @@ Write-Host 'APK 已安装/更新。'
 $taskLaunch=(& $taskAdb -s $taskSerial shell am start -W -n org.local.reader/.MainActivity | Out-String).Trim()
 if ($LASTEXITCODE -ne 0) {throw '漫画朗读未能打开。'}
 Write-Host '漫画朗读已打开。'
-Write-Host '[完成] 模拟器和 APK 已就绪。若电脑服务未运行，请执行“仅启动电脑服务.bat”。'
+Write-Host '[完成] 模拟器和 APK 已就绪。若电脑服务未运行，请执行“tools/launchers/仅启动电脑服务.bat”。'
 Write-Host '在安卓点“保存并启动朗读浮窗”，允许整个屏幕投屏，再打开漫画点“▶ 重新开始”。'
 if ($env:READER_NO_PAUSE -ne '1') {
     $taskRuntime=Get-Content -Raw -Encoding UTF8 -LiteralPath (Join-Path $taskRoot 'config/runtime.json') | ConvertFrom-Json

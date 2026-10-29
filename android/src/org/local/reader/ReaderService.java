@@ -27,6 +27,8 @@ public class ReaderService extends Service {
   static final String ICON_PLAY = "▶", ICON_PAUSE = "Ⅱ", ICON_STOP = "■", ICON_CLOSE = "×";
   static final long AUTO_FLIP_CAPTURE_DELAY_MS = 120;
   static final long AUTO_FLIP_CHANGE_TIMEOUT_MS = 1800;
+  // 相册末页回弹可能只改变局部渲染；此阈值用于比较前后两页，不影响帧稳定判断。
+  static final double PAGE_UNCHANGED_THRESHOLD = 6;
 
   final Handler main = new Handler(Looper.getMainLooper());
   final ExecutorService workers = Executors.newFixedThreadPool(2);
@@ -472,7 +474,7 @@ public class ReaderService extends Service {
 
   boolean unchangedPageTimedOut() {
     return adaptiveCapture && automatic && SystemClock.elapsedRealtime() - captureStarted >= AUTO_FLIP_CHANGE_TIMEOUT_MS
-        && difference(lastPageHash, stableHash) < 3;
+        && difference(lastPageHash, stableHash) < PAGE_UNCHANGED_THRESHOLD;
   }
 
   void frame(ImageReader r) {
@@ -503,7 +505,7 @@ public class ReaderService extends Service {
               Bitmap ready = pendingFrame;
               pendingFrame = null;
               try {
-                if (automatic && difference(lastPageHash, stableHash) < 3) {
+                if (automatic && difference(lastPageHash, stableHash) < PAGE_UNCHANGED_THRESHOLD) {
                   if (adaptiveCapture && !unchangedPageTimedOut()) {
                     // 翻页动画较慢时继续观察；一旦出现新画面，仍需稳定 300ms 才上传。
                     return;

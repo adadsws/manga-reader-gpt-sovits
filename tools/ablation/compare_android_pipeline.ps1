@@ -5,7 +5,7 @@ param(
     [Parameter(Mandatory=$true)][string]$Output
 )
 $ErrorActionPreference='Stop'
-$taskRoot=Split-Path -Parent $PSScriptRoot
+$taskRoot=Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 Set-Location -LiteralPath $taskRoot
 $taskRuntime=Get-Content -Raw -Encoding UTF8 -LiteralPath 'config/runtime.json' | ConvertFrom-Json
 $taskPython=$taskRuntime.python

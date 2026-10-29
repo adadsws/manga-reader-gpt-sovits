@@ -1,7 +1,7 @@
 ﻿# 电脑端纯脚本消融入口；不启动或操作 Android。
 param([switch]$CheckOnly, [switch]$Smoke)
 $ErrorActionPreference = 'Stop'
-$taskRoot = Split-Path -Parent $PSScriptRoot
+$taskRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 Set-Location -LiteralPath $taskRoot
 $taskRuntime = Get-Content -Raw -Encoding UTF8 -LiteralPath 'config/runtime.json' | ConvertFrom-Json
 $taskConfig = Get-Content -Raw -Encoding UTF8 -LiteralPath 'config/reader.json' | ConvertFrom-Json
@@ -30,7 +30,7 @@ try {
     Write-Host '正在启动电脑 OCR/TTS 服务…' -ForegroundColor Cyan
     New-Item -ItemType Directory -Force -Path $taskOutput | Out-Null
     $taskStartupLog = Join-Path $taskOutput 'service-start.log'
-    & (Join-Path $PSScriptRoot 'start.ps1') *> $taskStartupLog
+    & (Join-Path $taskRoot 'tools/start.ps1') *> $taskStartupLog
     if ($LASTEXITCODE -ne 0) {
         Get-Content -LiteralPath $taskStartupLog -Tail 30
         throw '电脑服务启动失败'

@@ -10,7 +10,7 @@ import time
 from datetime import datetime
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 sys.path[:0] = [str(ROOT / '~temp/ocrdeps'), str(ROOT)]
 os.environ['PYTHONUTF8'] = '1'
 os.environ['PYTHONDONTWRITEBYTECODE'] = '1'
@@ -283,7 +283,7 @@ def main():
         matrix = output / f'book{number}.json'
         run_book(source, matrix, args.modes)
         matrices.append(matrix)
-    from tools.summarize_android_ablation import summarize
+    from tools.ablation.summarize_android_ablation import summarize
     result = summarize(matrices)
     write_json(output / 'summary.json', result)
     print('summary', output / 'summary.json', flush=True)

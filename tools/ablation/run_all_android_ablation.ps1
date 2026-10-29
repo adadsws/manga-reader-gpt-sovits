@@ -2,7 +2,7 @@
 # 再次运行会跳过已完成的整页；未完成的页面会从第一轮重测。
 param([switch]$CheckOnly)
 $ErrorActionPreference = 'Stop'
-$taskRoot = Split-Path -Parent $PSScriptRoot
+$taskRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 Set-Location -LiteralPath $taskRoot
 
 $taskRuntime = Get-Content -Raw -Encoding UTF8 -LiteralPath 'config/runtime.json' | ConvertFrom-Json
@@ -42,7 +42,7 @@ try {
         $taskActive = Get-Content -Raw -Encoding UTF8 -LiteralPath $taskActivePath | ConvertFrom-Json
         if (!$taskActive.restored) {
             Write-Host '检测到未恢复批次，正在恢复安卓设置和媒体音量…' -ForegroundColor Yellow
-            & (Join-Path $PSScriptRoot 'test_session.ps1') -Action restore
+            & (Join-Path $taskRoot 'tools/test_session.ps1') -Action restore
             if ($LASTEXITCODE -ne 0) {
                 Write-Host '自动恢复失败，请排查后运行 tools/test_session.ps1 -Action restore。' -ForegroundColor Red
                 $taskExit = 1
