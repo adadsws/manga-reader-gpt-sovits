@@ -6,16 +6,16 @@ if /i "%~1"=="check" goto check
 set "reader_follow=-Follow"
 if /i "%~1"=="once" set "reader_follow="
 if /i "%~1"=="stop" goto stop
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0..\start.ps1" %reader_follow%
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0tools\start.ps1" %reader_follow%
 goto done
 :stop
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0..\stop.ps1"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0tools\stop.ps1"
 :done
 set "reader_exit=%errorlevel%"
 if not "%READER_NO_PAUSE%"=="1" pause
 exit /b %reader_exit%
 :check
-if not exist "%~dp0..\start.ps1" exit /b 1
-if not exist "%~dp0..\stop.ps1" exit /b 1
+if not exist "%~dp0tools\start.ps1" exit /b 1
+if not exist "%~dp0tools\stop.ps1" exit /b 1
 echo 电脑服务入口路径检查通过。
 exit /b 0
